@@ -1155,8 +1155,32 @@
 
     .svg-chart {
       width: 100%;
-      height: 270px;
+      height: auto;
+      aspect-ratio: 760 / 250;
+      min-height: 175px;
+      max-height: 270px;
       overflow: visible;
+    }
+
+    .svg-chart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .concept-visual-illustration svg {
+      width: 100%;
+      height: auto !important;
+      min-height: 68px;
+      max-height: 105px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* PREGUNTA Y OPCIONES DE SELECCIÓN MÚLTIPLE */
@@ -1962,17 +1986,545 @@
       display: none !important;
     }
 
-    @media (max-width: 640px) {
-      .level-stepper .step-connector {
-        display: none;
+    /* ========================================================
+       ACCESIBILIDAD, TECLADO Y PREFERENCIAS DE MOVIMIENTO
+       ======================================================== */
+    button:focus-visible,
+    input:focus-visible,
+    .option-card:focus-visible {
+      outline: 2.5px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    @media (hover: none) {
+      .option-card:hover:not(.disabled) {
+        transform: none;
       }
 
-      .header-actions .player-pill {
-        display: none;
+      .option-card:active:not(.disabled) {
+        transform: scale(0.99);
+      }
+
+      .btn-primary:hover,
+      .btn-ranking:hover,
+      .btn-theme-toggle:hover,
+      .btn-cert:hover {
+        transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ========================================================
+       DISEÑO RESPONSIVE MULTIDISPOSITIVO
+       Rangos:
+       - Tablets: 768px – 1023px
+       - Celulares grandes: 431px – 767px
+       - Celulares estándar: 375px – 430px
+       - Celulares pequeños: 320px – 374px
+       ======================================================== */
+
+    /* 1. TABLETS (768px a 1023px) */
+    @media (max-width: 1023px) {
+      header {
+        padding: 0.75rem 1.15rem;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .header-actions {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      main {
+        padding: 1.25rem 1rem 2.5rem;
+        gap: 1.25rem;
+      }
+
+      .view-card {
+        padding: 1.65rem 1.5rem;
+      }
+
+      .certificate-card {
+        padding: 1.75rem 1.35rem;
+      }
+
+      .cert-border-ornament {
+        padding: 1.65rem 1.35rem;
+      }
+    }
+
+    /* 2. CELULARES GRANDES Y TABLETS VERTICALES (hasta 767px) */
+    @media (max-width: 767px) {
+      header {
+        padding: 0.65rem 0.85rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.55rem;
+      }
+
+      .brand {
+        justify-content: space-between;
+        width: 100%;
+      }
+
+      .brand-icon {
+        font-size: 1.55rem;
+      }
+
+      .brand-text {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .brand-text h1 {
+        font-size: 1.05rem;
+      }
+
+      .brand-text p {
+        font-size: 0.72rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .btn-theme-toggle,
+      .btn-ranking,
+      .btn-cert {
+        min-height: 44px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        flex: 1 1 auto;
+        justify-content: center;
+      }
+
+      .db-status-pill {
+        min-height: 36px;
+        padding: 4px 9px;
+        font-size: 0.7rem;
+      }
+
+      .player-pill {
+        min-height: 36px;
+        padding: 4px 10px;
+        font-size: 0.76rem;
+        max-width: 100%;
+      }
+
+      .player-pill .name {
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      main {
+        padding: 0.9rem 0.75rem 2.25rem;
+        gap: 1rem;
+      }
+
+      .view-card {
+        padding: 1.25rem 1rem;
+        border-radius: 12px;
+      }
+
+      /* Login y Formulario Móvil */
+      .hero-badge {
+        font-size: 0.72rem;
+        padding: 4px 11px;
       }
 
       .hero-title {
-        font-size: 1.7rem;
+        font-size: clamp(1.45rem, 5.5vw, 1.85rem);
+      }
+
+      .hero-desc {
+        font-size: 0.94rem;
+        margin-bottom: 1.35rem;
+      }
+
+      .login-form-card {
+        padding: 1.25rem 1rem;
+      }
+
+      /* Evitar auto-zoom en iOS/Android usando 16px (1rem) en inputs */
+      .form-control {
+        font-size: 1rem;
+        min-height: 48px;
+        padding: 0.75rem 0.9rem;
+      }
+
+      .btn-primary {
+        min-height: 48px;
+        font-size: 0.96rem;
+        padding: 0.85rem 1rem !important;
+      }
+
+      /* Barra de Progreso de 7 Niveles sin scroll horizontal */
+      .level-nav-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0.75rem 0.85rem;
+        gap: 0.6rem;
+        overflow-x: hidden;
+      }
+
+      .level-stepper {
+        width: 100%;
+        justify-content: space-between;
+        gap: 2px;
+      }
+
+      .step-node {
+        width: 32px;
+        height: 32px;
+        font-size: 0.78rem;
+        flex-shrink: 0;
+      }
+
+      .step-connector {
+        flex: 1;
+        width: auto;
+        min-width: 4px;
+        height: 2.5px;
+      }
+
+      .score-badge {
+        align-self: center;
+        width: 100%;
+        justify-content: center;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+      }
+
+      /* Vista de Explicación / Lección */
+      .concept-card {
+        border-left-width: 4px;
+        gap: 1.1rem;
+      }
+
+      .concept-title {
+        font-size: clamp(1.3rem, 5vw, 1.6rem);
+      }
+
+      .lesson-section {
+        padding: 1rem;
+      }
+
+      .lesson-section-header {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .lesson-section-header h3 {
+        font-size: 1rem;
+      }
+
+      .lesson-text {
+        font-size: 0.92rem;
+      }
+
+      .analogy-highlight-box {
+        padding: 1rem;
+        gap: 0.85rem;
+      }
+
+      .analogy-icon-big {
+        font-size: 2rem;
+      }
+
+      .concept-visual-illustration {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .golden-rules {
+        padding: 1rem;
+      }
+
+      /* Vista de Ejercicios y Gráficos */
+      .exercise-meta-bar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chart-container {
+        padding: 0.75rem 0.55rem;
+        min-height: 0;
+      }
+
+      .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.65rem;
+      }
+
+      .chart-title-box {
+        font-size: 0.88rem;
+        line-height: 1.3;
+      }
+
+      .chart-legend {
+        width: 100%;
+        gap: 6px;
+        font-size: 0.72rem;
+      }
+
+      .legend-item {
+        padding: 3px 8px;
+        white-space: normal;
+        line-height: 1.25;
+      }
+
+      .question-box {
+        padding: 0.95rem 1rem;
+      }
+
+      .question-prompt {
+        font-size: 0.96rem;
+      }
+
+      .option-card {
+        min-height: 52px;
+        padding: 0.8rem 0.9rem;
+        gap: 10px;
+      }
+
+      .option-badge {
+        width: 30px;
+        height: 30px;
+      }
+
+      .option-text {
+        font-size: 0.9rem;
+      }
+
+      .feedback-box {
+        padding: 0.9rem 1rem;
+        gap: 10px;
+      }
+
+      /* Resultado del Nivel */
+      .level-result-card {
+        padding: 1.75rem 1rem;
+      }
+
+      .result-title {
+        font-size: 1.45rem;
+      }
+
+      .result-subtitle {
+        font-size: 0.95rem;
+      }
+
+      .stats-pill-row {
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .result-stat-pill {
+        flex: 1 1 120px;
+        padding: 0.65rem 0.9rem;
+      }
+
+      #resultActionContainer .btn-primary {
+        max-width: 100% !important;
+        width: 100%;
+      }
+
+      /* Certificado Oficial en Móvil */
+      .certificate-card {
+        padding: 1rem 0.75rem;
+        outline-offset: 3px;
+        border-radius: 14px;
+      }
+
+      .cert-border-ornament {
+        padding: 1.25rem 0.85rem;
+        border-radius: 10px;
+      }
+
+      .cert-institution {
+        font-size: 0.68rem;
+        letter-spacing: 0.8px;
+        padding: 5px 10px;
+        white-space: normal;
+        line-height: 1.35;
+      }
+
+      .cert-gold-seal {
+        width: 72px;
+        height: 72px;
+      }
+
+      .cert-main-title {
+        font-size: clamp(1.25rem, 5vw, 1.55rem);
+        letter-spacing: 0.5px;
+        line-height: 1.25;
+      }
+
+      .cert-main-subtitle {
+        font-size: 0.84rem;
+        margin-bottom: 1rem;
+      }
+
+      .cert-award-text,
+      .cert-body-text {
+        font-size: 0.86rem;
+        line-height: 1.55;
+      }
+
+      .cert-name {
+        font-size: clamp(1.5rem, 6vw, 1.95rem);
+        word-break: break-word;
+      }
+
+      .cert-date-score {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 0.84rem !important;
+      }
+
+      .cert-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-top: 1.35rem;
+      }
+
+      .cert-actions .btn-primary,
+      .cert-actions .btn-ranking {
+        max-width: 100% !important;
+        width: 100%;
+        min-height: 48px;
+        justify-content: center;
+      }
+
+      /* Modal de Ranking en Móvil */
+      .modal-overlay {
+        padding: 0.6rem;
+      }
+
+      .modal-card {
+        max-height: 90vh;
+        border-radius: 14px;
+      }
+
+      .modal-header {
+        padding: 0.95rem 1rem;
+      }
+
+      .modal-header h3 {
+        font-size: 0.98rem;
+      }
+
+      .modal-close {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-body {
+        padding: 0.75rem 0.75rem;
+      }
+
+      .table-ranking {
+        font-size: 0.82rem;
+      }
+
+      .table-ranking th,
+      .table-ranking td {
+        padding: 8px 6px;
+      }
+    }
+
+    /* 3. CELULARES ESTÁNDAR (375px a 430px) */
+    @media (max-width: 430px) {
+      .analogy-highlight-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .step-node {
+        width: 30px;
+        height: 30px;
+        font-size: 0.75rem;
+      }
+
+      .form-group label span {
+        display: block;
+        margin-top: 2px;
+      }
+    }
+
+    /* 4. CELULARES PEQUEÑOS (320px a 374px) */
+    @media (max-width: 374px) {
+      header {
+        padding: 0.55rem 0.6rem;
+      }
+
+      .btn-theme-toggle,
+      .btn-ranking,
+      .btn-cert {
+        padding: 6px 8px;
+        font-size: 0.75rem;
+      }
+
+      main {
+        padding: 0.7rem 0.5rem 2rem;
+      }
+
+      .view-card {
+        padding: 1rem 0.75rem;
+      }
+
+      .step-node {
+        width: 27px;
+        height: 27px;
+        font-size: 0.72rem;
+      }
+
+      .step-connector {
+        min-width: 2px;
+      }
+
+      .certificate-card {
+        padding: 0.75rem 0.5rem;
+      }
+
+      .cert-border-ornament {
+        padding: 1rem 0.6rem;
+      }
+
+      .table-ranking {
+        font-size: 0.76rem;
+      }
+
+      .table-ranking th,
+      .table-ranking td {
+        padding: 6px 4px;
       }
     }
   </style>
@@ -2052,7 +2604,7 @@
             <div class="form-group">
               <label for="inputPlayerId">Tu Identificación (Sharp ID) <span>*Obligatorio</span></label>
               <input type="text" id="inputPlayerId" class="form-control" placeholder="Ej. 38645211" required
-                autocomplete="off">
+                inputmode="numeric" autocomplete="off">
             </div>
 
             <div class="form-group">
@@ -2341,30 +2893,32 @@
   </main>
 
   <!-- MODAL: RANKING EN VIVO DESDE NEON POSTGRESQL -->
-  <div class="modal-overlay" id="rankingModal">
+  <div class="modal-overlay" id="rankingModal" onclick="if(event.target === this) closeRankingModal()">
     <div class="modal-card">
       <div class="modal-header">
         <h3><span>🏆</span> Tabla de Posiciones · Neon PostgreSQL</h3>
-        <button class="modal-close" onclick="closeRankingModal()">&times;</button>
+        <button class="modal-close" onclick="closeRankingModal()" aria-label="Cerrar tabla de posiciones">&times;</button>
       </div>
       <div class="modal-body">
-        <table class="table-ranking">
-          <thead>
-            <tr>
-              <th style="width: 45px;">Puesto</th>
-              <th>Participante</th>
-              <th style="text-align: center;">Nivel</th>
-              <th style="text-align: right;">Puntaje</th>
-            </tr>
-          </thead>
-          <tbody id="rankingTableBody">
-            <tr>
-              <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                Cargando datos desde Neon...
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table-ranking">
+            <thead>
+              <tr>
+                <th style="width: 45px;">Puesto</th>
+                <th>Participante</th>
+                <th style="text-align: center;">Nivel</th>
+                <th style="text-align: right;">Puntaje</th>
+              </tr>
+            </thead>
+            <tbody id="rankingTableBody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                  Cargando datos desde Neon...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -3501,11 +4055,12 @@
         const isHigh = cy < height / 2;
         const boxY = isHigh ? cy + 22 : cy - 36;
         const boxW = Math.max(160, ex.calloutText.length * 7.5);
+        const boxX = Math.max(padLeft + 4, Math.min(padLeft + plotW - boxW - 4, cx - boxW / 2));
 
         svg += `
           <line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(boxY + (isHigh ? 0 : 22)).toFixed(1)}" stroke="${calloutBorder}" stroke-width="1.5" stroke-dasharray="2,2"/>
-          <rect x="${(cx - boxW / 2).toFixed(1)}" y="${boxY.toFixed(1)}" width="${boxW}" height="22" rx="6" fill="${calloutBg}" stroke="${calloutBorder}" stroke-width="1.4" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"/>
-          <text x="${cx.toFixed(1)}" y="${(boxY + 15).toFixed(1)}" fill="${calloutTextColor}" font-size="9.5" font-weight="bold" text-anchor="middle">${ex.calloutText}</text>
+          <rect x="${boxX.toFixed(1)}" y="${boxY.toFixed(1)}" width="${boxW}" height="22" rx="6" fill="${calloutBg}" stroke="${calloutBorder}" stroke-width="1.4" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"/>
+          <text x="${(boxX + boxW / 2).toFixed(1)}" y="${(boxY + 15).toFixed(1)}" fill="${calloutTextColor}" font-size="9.5" font-weight="bold" text-anchor="middle">${ex.calloutText}</text>
         `;
       }
 
@@ -3864,6 +4419,30 @@
     window.addEventListener('DOMContentLoaded', () => {
       applyTheme(currentTheme);
       checkNeonHealth();
+    });
+
+    // Cerrar modal con tecla Escape y recalcular gráfico al redimensionar pantalla
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeRankingModal();
+    });
+
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const exerciseView = document.getElementById('viewExercise');
+        if (exerciseView && !exerciseView.classList.contains('hidden') && typeof LEVELS_DATA !== 'undefined') {
+          const lvlData = LEVELS_DATA[currentLevel - 1];
+          if (lvlData && lvlData.exercises && lvlData.exercises[currentExerciseIndex]) {
+            const ex = lvlData.exercises[currentExerciseIndex];
+            if (ex.chartType === 'bell' || ex.chartType === 'bellCompare') {
+              renderBellCurveChart(ex);
+            } else {
+              renderSvgChart(ex);
+            }
+          }
+        }
+      }, 150);
     });
   </script>
 </body>
