@@ -1,0 +1,3832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Taller Dinámico de SPC: Juego 1 con Dado y 12 Casos de Análisis (Gráficos y Números) y Juego 2 de Seguidor de Trayectoria y Pulso en tiempo real.">
+  <title>Torneo de Calidad SPC | Dos Juegos Interactivos</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-page: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-alt: #273549;
+      --border: #334155;
+      --border-accent: #38bdf8;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --blue: #0284c7;
+      --blue-light: #38bdf8;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --purple: #8b5cf6;
+      
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius: 12px;
+    }
+
+    body.theme-light {
+      --bg-page: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-alt: #f8fafc;
+      --border: #cbd5e1;
+      --border-accent: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    /* HEADER */
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 2px solid var(--border);
+      padding: 0.85rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      font-size: 1.8rem;
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .brand-sub {
+      font-size: 0.8rem;
+      color: var(--blue-light);
+      font-weight: 600;
+    }
+
+    /* PESTAÑAS */
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-card-alt);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      gap: 4px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 18px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--blue);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.4);
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-header {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .btn-header:hover {
+      border-color: var(--blue-light);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      flex: 1;
+      padding: 1.75rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .view-panel {
+      display: none;
+    }
+
+    .view-panel.active {
+      display: block;
+    }
+
+    /* ========================================================= */
+    /* JUEGO 1: EL DADO DEL INSPECTOR (12 CASOS DE ANÁLISIS) */
+    /* ========================================================= */
+    .dice-hero-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .dice-action-area {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* Dado animado 3D / Visual */
+    .dice-cube {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #ffffff;
+      box-shadow: 0 8px 25px rgba(2, 132, 199, 0.45);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      user-select: none;
+      transition: transform 0.2s;
+    }
+
+    .dice-cube.rolling {
+      animation: rollAnimation 0.8s ease-in-out infinite;
+    }
+
+    @keyframes rollAnimation {
+      0% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(90deg) scale(1.1); }
+      50% { transform: rotate(180deg) scale(0.95); }
+      75% { transform: rotate(270deg) scale(1.08); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    .btn-roll-dice {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.4);
+      transition: all 0.15s;
+    }
+
+    .btn-roll-dice:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.6);
+    }
+
+    /* Filtro / Selector directo de casos 1 a 12 */
+    .case-selector-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-case-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-case-pill:hover, .btn-case-pill.active {
+      background: var(--blue);
+      border-color: var(--blue-light);
+      color: #fff;
+    }
+
+    /* Tarjetas de Casos de Análisis */
+    .case-container-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .case-card-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      display: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .case-card-panel.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .case-card-layout {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .case-media-box {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      min-height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge-case-type {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge-graph {
+      background: rgba(2, 132, 199, 0.15);
+      border: 1px solid var(--blue);
+      color: var(--blue-light);
+    }
+
+    .badge-numbers {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--amber);
+      color: var(--amber);
+    }
+
+    .case-question-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+    }
+
+    .case-description {
+      font-size: 1rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-reveal-answer {
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 1.25rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--green);
+      padding: 1.25rem;
+      border-radius: 8px;
+    }
+
+    .answer-box.visible {
+      display: block;
+    }
+
+    .award-points-bar {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .team-eval-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-score-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-score-chip:hover {
+      background: var(--blue);
+      border-color: var(--blue-light);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn-score-chip.zero:hover {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    /* Modal de CRUD de Equipos */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius);
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    }
+
+    .input-crud-text {
+      width: 100%;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-main);
+      padding: 9px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    .input-crud-text:focus {
+      outline: none;
+      border-color: var(--blue-light);
+    }
+
+    /* Notificación Toast */
+    .toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid var(--green);
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      font-weight: 600;
+      font-size: 0.9rem;
+      z-index: 2000;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Tablas de análisis numérico dentro de los casos */
+    .mini-analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .mini-analysis-table th, .mini-analysis-table td {
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+    }
+
+    .mini-analysis-table th {
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--blue-light);
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    /* ========================================================= */
+    /* JUEGO 2: SEGUIDOR DE TRAYECTORIA Y PULSO (15 SEGUNDOS) */
+    /* ========================================================= */
+    .game-two-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.75rem;
+    }
+
+    .tracker-arena {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.15);
+      padding: 4px 16px;
+      border-radius: 8px;
+    }
+
+    .live-accuracy-display {
+      font-family: var(--font-mono);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--blue-light);
+      background: rgba(2, 132, 199, 0.15);
+      padding: 4px 16px;
+      border-radius: 8px;
+    }
+
+    .tracker-canvas-box {
+      width: 100%;
+      height: 380px;
+      background: #090d16;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    body.theme-light .tracker-canvas-box {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    #canvas-tracker {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .tracker-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.25rem;
+    }
+
+    .btn-start-game {
+      background: linear-gradient(135deg, var(--green), #059669);
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-start-game:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Modal / Pantalla de Fin de Juego 2 */
+    .game-result-card {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .game-result-card.active {
+      display: block;
+      animation: fadeIn 0.3s;
+    }
+
+    .final-score-huge {
+      font-family: var(--font-mono);
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--green);
+      margin: 4px 0;
+    }
+
+    /* Grid de métricas estadísticas del Juego 2 */
+    .metrics-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin: 1.15rem 0;
+    }
+
+    @media (max-width: 900px) {
+      .metrics-stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .metric-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .metric-stat-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+    }
+
+    .metric-stat-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .metric-stat-val {
+      font-family: var(--font-mono);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--blue-light);
+    }
+
+    .metric-stat-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.3;
+    }
+
+    .run-chart-box {
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      height: 140px;
+      width: 100%;
+      margin: 6px 0 12px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.theme-light .run-chart-box {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    #canvas-run-summary {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* PANEL LATERAL DE PODIO Y REGISTRO */
+    .podium-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .team-item-podium {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .team-score-exact {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--amber);
+    }
+
+    /* ========================================================= */
+    /* JUEGO 3: AUDITORÍA DE GRÁFICA (15 DÍAS) */
+    /* ========================================================= */
+    .game3-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .audit-chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .audit-chart-wrapper {
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      height: 360px;
+      margin: 1rem 0;
+      overflow: hidden;
+    }
+
+    body.theme-light .audit-chart-wrapper {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    #canvas-game3-audit {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .audit-limits-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 10px;
+      font-size: 0.85rem;
+    }
+
+    .audit-limit-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+    }
+
+    .pill-lse { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+    .pill-media { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); }
+    .pill-lie { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .audit-table-wrapper {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-card-alt);
+    }
+
+    .audit-data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 0.85rem;
+      min-width: 680px;
+    }
+
+    .audit-data-table th, .audit-data-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+    }
+
+    .audit-data-table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .audit-data-table td.out-of-spec {
+      background: rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      font-weight: 900;
+      border-color: rgba(239, 68, 68, 0.6);
+    }
+
+    .audit-questions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 900px) {
+      .audit-questions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .audit-q-card {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+      transition: all 0.2s;
+    }
+
+    .audit-q-card:hover {
+      border-color: var(--border-accent);
+    }
+
+    .audit-q-card.answered {
+      border-left: 4px solid var(--green);
+    }
+
+    .audit-q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .audit-q-num {
+      background: var(--purple);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+
+    .audit-q-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .audit-q-solution {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    body.theme-light .audit-q-solution {
+      background: rgba(241, 245, 249, 0.85);
+      border-color: #cbd5e1;
+    }
+
+    .audit-q-solution.revealed {
+      display: block;
+      animation: fadeIn 0.25s;
+    }
+
+    .btn-check-q {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-check-q.checked {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .btn-check-q:hover {
+      border-color: var(--blue-light);
+    }
+
+    /* ========================================================= */
+    /* JUEGO 4: EL CRONÓMETRO DE PRECISIÓN (10.000s) */
+    /* ========================================================= */
+    .game-four-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 950px) {
+      .game-four-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chrono-arena {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      text-align: center;
+    }
+
+    .chrono-display-card {
+      background: #060a12;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem 1.5rem;
+      margin: 1.5rem 0;
+      box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .chrono-display-card.running {
+      border-color: var(--green);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.25), inset 0 0 15px rgba(16, 185, 129, 0.15);
+    }
+
+    .chrono-display-card.frozen {
+      border-color: var(--amber);
+      box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), inset 0 0 15px rgba(245, 158, 11, 0.15);
+    }
+
+    .chrono-digits {
+      font-family: var(--font-mono);
+      font-size: 5rem;
+      font-weight: 900;
+      color: #38bdf8;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+      line-height: 1;
+    }
+
+    .chrono-display-card.running .chrono-digits {
+      color: #10b981;
+      text-shadow: 0 0 20px rgba(16, 185, 129, 0.6);
+    }
+
+    .chrono-display-card.frozen .chrono-digits {
+      color: #f59e0b;
+      text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    }
+
+    @media (max-width: 600px) {
+      .chrono-digits {
+        font-size: 3.2rem;
+      }
+    }
+
+    .chrono-state-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 1rem;
+    }
+
+    .badge-idle {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .badge-running {
+      background: rgba(16, 185, 129, 0.2);
+      color: var(--green);
+      border: 1px solid var(--green);
+      animation: pulseGlow 1.2s infinite alternate;
+    }
+
+    .badge-frozen {
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--amber);
+      border: 1px solid var(--amber);
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.7; transform: scale(0.98); }
+      100% { opacity: 1; transform: scale(1.02); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN SUPERIOR -->
+  <header>
+    <div class="brand-box">
+      <div class="brand-icon">🎯</div>
+      <div>
+        <div class="brand-title">Control Estadístico de Procesos (SPC)</div>
+        <div class="brand-sub">Torneo de Análisis & Habilidad de Proceso</div>
+      </div>
+    </div>
+
+    <!-- Pestañas principales -->
+    <nav class="nav-tabs" aria-label="Navegación del Torneo">
+      <button class="tab-btn active" id="tab-game1" onclick="switchMainTab('game1')">
+        🎲 Juego 1: El Dado (12 Casos)
+      </button>
+      <button class="tab-btn" id="tab-game2" onclick="switchMainTab('game2')">
+        〰️ Juego 2: El Pulso (15s)
+      </button>
+      <button class="tab-btn" id="tab-game3" onclick="switchMainTab('game3')">
+        📈 Juego 3: Auditoría (15 Días)
+      </button>
+      <button class="tab-btn" id="tab-game4" onclick="switchMainTab('game4')">
+        ⏱️ Juego 4: El Cronómetro (10s)
+      </button>
+      <button class="tab-btn" id="tab-podium" onclick="switchMainTab('podium')">
+        🏆 Clasificación & Podio
+      </button>
+    </nav>
+
+    <!-- Botones Rápidos -->
+    <div class="header-controls">
+      <button class="btn-header" onclick="toggleTheme()" title="Cambiar contraste para proyector">
+        🌓 Tema Proyector
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+
+    <!-- ========================================================= -->
+    <!-- JUEGO 1: EL DADO DEL INSPECTOR (12 CASOS) -->
+    <!-- ========================================================= -->
+    <section id="panel-game1" class="view-panel active">
+      
+      <!-- HERO DEL DADO -->
+      <div class="dice-hero-box">
+        <div>
+          <span style="color: var(--blue-light); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">
+            Dinámica de Análisis de Calidad
+          </span>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 2px;">Tira el Dado del Inspector (Casos 1 al 12)</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+            El equipo tira el dado virtual. El número que salga abre un caso de análisis real (gráficas o números).
+          </p>
+        </div>
+
+        <div class="dice-action-area">
+          <div class="dice-cube" id="visual-dice">?</div>
+          <button class="btn-roll-dice" onclick="rollInspectorDice()">🎲 Tirar Dado</button>
+        </div>
+      </div>
+
+      <!-- CONTENEDOR DE CASOS (SE MUESTRA ÚNICAMENTE EL QUE SALGA EN EL DADO) -->
+      <div class="case-container-grid">
+
+        <!-- ESTADO INICIAL: ESPERANDO EL TIRO DEL DADO -->
+        <div class="case-card-panel active" id="case-empty-state" style="text-align: center; padding: 4rem 2rem;">
+          <div style="font-size: 3.8rem; margin-bottom: 0.75rem;">🎲</div>
+          <h3 style="font-size: 1.7rem; font-weight: 800; margin-bottom: 0.5rem;">El dado aún no ha sido lanzado</h3>
+          <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 540px; margin: 0 auto 1.75rem auto; line-height: 1.6;">
+            Presiona el botón <strong style="color: var(--blue-light);">"🎲 Tirar Dado"</strong> para sortear y revelar <strong>únicamente</strong> el caso que le toca analizar a tu equipo. Los demás 11 casos permanecerán ocultos.
+          </p>
+          <button class="btn-roll-dice" onclick="rollInspectorDice()" style="display: inline-block;">
+            🎲 Tirar Dado Ahora
+          </button>
+        </div>
+
+        <!-- CASO 1: GRÁFICO (TENDENCIA CONTINUA) -->
+        <div class="case-card-panel" id="case-panel-1">
+          <div class="case-card-layout">
+            <div class="case-media-box">
+              <canvas id="canvas-case-1" width="420" height="230"></canvas>
+            </div>
+            <div>
+              <span class="badge-case-type badge-graph">Caso #1 • Análisis Gráfico</span>
+              <h3 class="case-question-title">¿Qué diagnóstico tiene esta gráfica de promedios?</h3>
+              <p class="case-description">
+                Observa los últimos 6 puntos consecutivos. Ninguno ha salido de la línea roja superior, pero ascienden de manera ininterrumpida. ¿Qué está ocurriendo físicamente en la máquina?
+              </p>
+              <button class="btn-reveal-answer" onclick="toggleAnswer('ans-1')">🔍 Revelar Diagnóstico Oficial</button>
+              <div class="answer-box" id="ans-1">
+                <strong>Diagnóstico: TENDENCIA ASCENDENTE (Desgaste Progresivo)</strong>
+                <p style="margin-top: 4px; font-size: 0.9rem;">
+                  <strong>Causa real:</strong> Desgaste continuo de la herramienta de corte, aumento térmico del motor o suciedad acumulada en boquillas.
+                </p>
+                <div class="award-points-bar">
+                  <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                  <span id="assign-case-1"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 2: NÚMEROS (RANGO DISPARADO CON PROMEDIO IDÉNTICO) -->
+        <div class="case-card-panel" id="case-panel-2">
+          <div class="case-card-layout">
+            <div class="case-media-box">
+              <table class="mini-analysis-table">
+                <thead>
+                  <tr>
+                    <th>Subgrupo</th><th>Tiro 1</th><th>Tiro 2</th><th>Tiro 3</th><th>Tiro 4</th><th>Promedio</th><th>Rango</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>#1</td><td>10.1</td><td>9.9</td><td>10.0</td><td>10.0</td><td><strong>10.0 cm</strong></td><td>0.2 cm</td></tr>
+                  <tr><td>#2</td><td>10.2</td><td>9.8</td><td>10.1</td><td>9.9</td><td><strong>10.0 cm</strong></td><td>0.4 cm</td></tr>
+                  <tr><td>#3</td><td>9.9</td><td>10.1</td><td>10.0</td><td>10.0</td><td><strong>10.0 cm</strong></td><td>0.2 cm</td></tr>
+                  <tr style="background: rgba(239, 68, 68, 0.15);">
+                    <td><strong>#4</strong></td><td>13.0</td><td>7.0</td><td>12.5</td><td>7.5</td><td><strong>10.0 cm</strong></td><td style="color: var(--red); font-weight: 800;">6.0 cm</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div>
+              <span class="badge-case-type badge-numbers">Caso #2 • Análisis Numérico</span>
+              <h3 class="case-question-title">El promedio dice 10.0 cm, ¿el proceso está bien?</h3>
+              <p class="case-description">
+                El operador afirma: <em>"Los 4 subgrupos tienen promedio de 10.0 cm exactos, no hay que tocar nada"</em>. Como inspector de calidad, ¿aceptas el lote del Subgrupo #4 o lo detienes? ¿Por qué?
+              </p>
+              <button class="btn-reveal-answer" onclick="toggleAnswer('ans-2')">🔍 Revelar Diagnóstico Oficial</button>
+              <div class="answer-box" id="ans-2">
+                <strong>Diagnóstico: PROCESO INESTABLE POR DISPERSIÓN (Rango Crítico)</strong>
+                <p style="margin-top: 4px; font-size: 0.9rem;">
+                  <strong>Explicación:</strong> Aunque el promedio se mantiene en 10 cm, el rango se disparó de 0.2 a 6.0 cm. El cliente recibió piezas inútiles de 7 cm y 13 cm. El proceso perdió repetibilidad por holgura mecánica o fallo de fijación.
+                </p>
+                <div class="award-points-bar">
+                  <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                  <span id="assign-case-2"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 3: GRÁFICO (RACHA POR DEBAJO) -->
+        <div class="case-card-panel" id="case-panel-3">
+          <div class="case-card-layout">
+            <div class="case-media-box">
+              <canvas id="canvas-case-3" width="420" height="230"></canvas>
+            </div>
+            <div>
+              <span class="badge-case-type badge-graph">Caso #3 • Análisis Gráfico</span>
+              <h3 class="case-question-title">8 puntos seguidos por debajo de la línea central</h3>
+              <p class="case-description">
+                Ningún punto está por debajo de la línea roja inferior (LCI), pero todos se ubican por debajo del centro. ¿Es variación natural o causa especial?
+              </p>
+              <button class="btn-reveal-answer" onclick="toggleAnswer('ans-3')">🔍 Revelar Diagnóstico Oficial</button>
+              <div class="answer-box" id="ans-3">
+                <strong>Diagnóstico: RACHA SOSTENIDA (Shift / Desplazamiento de Nivel)</strong>
+                <p style="margin-top: 4px; font-size: 0.9rem;">
+                  <strong>Causa real:</strong> La probabilidad de que 8 puntos caigan del mismo lado al azar es menor a 0.5%. El proceso cambió de nivel: nuevo lote de materia prima de menor densidad o calibración incorrecta del cero del sensor.
+                </p>
+                <div class="award-points-bar">
+                  <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                  <span id="assign-case-3"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 4: NÚMEROS (COMPARACIÓN DE DOS MÁQUINAS) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-4">
+          <div class="case-media-box">
+            <table class="mini-analysis-table">
+              <thead>
+                <tr><th>Máquina</th><th>Promedio General</th><th>Rango Promedio</th><th>Meta Ideal</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Máquina A</strong></td>
+                  <td>10.0 cm</td>
+                  <td style="color: var(--red); font-weight: 700;">5.4 cm</td>
+                  <td>10.0 cm</td>
+                </tr>
+                <tr>
+                  <td><strong>Máquina B</strong></td>
+                  <td style="color: var(--amber); font-weight: 700;">10.9 cm</td>
+                  <td style="color: var(--green); font-weight: 700;">0.3 cm</td>
+                  <td>10.0 cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <span class="badge-case-type badge-numbers">Caso #4 • Análisis Numérico</span>
+            <h3 class="case-question-title">¿Cuál máquina prefieres para tu línea de producción?</h3>
+            <p class="case-description">
+              La Máquina A tiene el promedio exacto (10.0 cm). La Máquina B está corrida a 10.9 cm pero su rango es diminuto (0.3 cm). ¿Cuál es más fácil y barata de corregir?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-4')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-4">
+              <strong>Diagnóstico: PREFERIMOS LA MÁQUINA B</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Explicación:</strong> Centrar la Máquina B solo requiere un ajuste rápido de tornillo/offset. En cambio, reducir la enorme dispersión de la Máquina A (5.4 cm) requiere costosas reparaciones mecánicas y cambio de baleros.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-4"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 5: GRÁFICO (PUNTO FUERA DE CONTROL) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-5">
+          <div class="case-media-box">
+            <canvas id="canvas-case-5" width="420" height="230"></canvas>
+          </div>
+          <div>
+            <span class="badge-case-type badge-graph">Caso #5 • Análisis Gráfico</span>
+            <h3 class="case-question-title">Un único pico por encima del Límite Superior</h3>
+            <p class="case-description">
+              El proceso venía completamente estable y en el Subgrupo #5 un punto salta violentamente fuera de la línea roja. Luego el Subgrupo #6 vuelve a la normalidad. ¿Qué se hace?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-5')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-5">
+              <strong>Diagnóstico: CAUSA ESPECIAL AISLADA</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Acción:</strong> No recalibrar toda la máquina. Se debe aislar el lote producido a esa hora específica e investigar qué ocurrió puntualmente (caída momentánea de voltaje, pieza mal encajada o error de dedo al capturar).
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-5"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 6: NÚMEROS (LÍMITES DE PROCESO VS TOLERANCIA DEL CLIENTE) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-6">
+          <div class="case-media-box">
+            <div style="font-size: 0.95rem; line-height: 1.8;">
+              <div style="border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                <strong>Límites del Proceso (Control):</strong><br>
+                Límite Sup: <strong>12.5 cm</strong> | Límite Inf: <strong>7.5 cm</strong>
+              </div>
+              <div style="padding-top: 8px;">
+                <strong>Tolerancia del Cliente (Especificación):</strong><br>
+                Máximo permitido: <strong style="color: var(--amber);">11.0 cm</strong> | Mínimo: <strong style="color: var(--amber);">9.0 cm</strong>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="badge-case-type badge-numbers">Caso #6 • Análisis Numérico</span>
+            <h3 class="case-question-title">¿El proceso es capaz de cumplirle al cliente?</h3>
+            <p class="case-description">
+              El proceso está en control estadístico y nunca genera puntos fuera de sus límites (7.5 a 12.5 cm). ¿El cliente estará satisfecho con los despachos?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-6')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-6">
+              <strong>Diagnóstico: PROCESO BAJO CONTROL PERO INCAPAZ (Cp < 1)</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Explicación:</strong> Estar en control significa ser predecible, pero no garantiza ser capaz. La variabilidad natural del proceso (amplitud de 5 cm) es mucho más ancha que la tolerancia exigida por el cliente (amplitud de 2 cm). Habrá rechazos masivos.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-6"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 7: GRÁFICO (GRÁFICA R DESCONTROLADA CON MEDIA CENTRADA) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-7">
+          <div class="case-media-box">
+            <canvas id="canvas-case-7" width="420" height="230"></canvas>
+          </div>
+          <div>
+            <span class="badge-case-type badge-graph">Caso #7 • Análisis Gráfico</span>
+            <h3 class="case-question-title">Gráfica de Rangos cruzando la línea superior</h3>
+            <p class="case-description">
+              En la pantalla del operador, la gráfica de Promedios está impecable, pero la gráfica de Rangos (R) acaba de romper su límite superior. ¿Cuál es el riesgo inmediato?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-7')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-7">
+              <strong>Diagnóstico: PÉRDIDA DE HOMOGENEIDAD Y PRECISIÓN</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Explicación:</strong> El proceso perdió repetibilidad entre piezas del mismo minuto. Causas comunes: mezcla de material virgen con reciclado en la tolva, juego mecánico en mordazas o piezas de diferentes proveedores combinadas.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-7"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 8: NÚMEROS (CÁLCULO RÁPIDO DE SUBGRUPO) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-8">
+          <div class="case-media-box">
+            <div style="text-align: center; font-size: 1.1rem;">
+              <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Subgrupo #7 (4 mediciones en cm):</p>
+              <div style="display: flex; gap: 10px; justify-content: center; font-family: var(--font-mono); font-size: 1.4rem; font-weight: 800;">
+                <span style="background: var(--bg-card); padding: 8px 12px; border-radius: 6px;">10.1</span>
+                <span style="background: var(--bg-card); padding: 8px 12px; border-radius: 6px;">10.2</span>
+                <span style="background: var(--bg-card); padding: 8px 12px; border-radius: 6px;">9.9</span>
+                <span style="background: rgba(239, 68, 68, 0.2); color: var(--red); padding: 8px 12px; border-radius: 6px;">14.5</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <span class="badge-case-type badge-numbers">Caso #8 • Análisis Numérico</span>
+            <h3 class="case-question-title">Calcula el Rango y detecta la anomalía</h3>
+            <p class="case-description">
+              El límite superior de rango de la empresa es <strong>2.5 cm</strong>. Con estos 4 tiros, ¿cuál es el rango exacto y qué decisión inmediata debe tomar el analista?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-8')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-8">
+              <strong>Diagnóstico: RANGO = 4.6 cm (FUERA DE LÍMITES)</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Cálculo:</strong> 14.5 − 9.9 = <strong>4.6 cm</strong>. Al superar 2.5 cm, la 4ta pieza (14.5) es una causa especial. Se debe separar esa pieza para análisis y verificar si hubo un golpe o fallo de sujeción.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-8"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 9: GRÁFICO (PERIODICIDAD / EFECTO TURNO) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-9">
+          <div class="case-media-box">
+            <canvas id="canvas-case-9" width="420" height="230"></canvas>
+          </div>
+          <div>
+            <span class="badge-case-type badge-graph">Caso #9 • Análisis Gráfico</span>
+            <h3 class="case-question-title">Ondulación periódica: sube y baja rítmicamente</h3>
+            <p class="case-description">
+              Los puntos suben sistemáticamente en las primeras horas y caen hacia el final de cada jornada de trabajo, repitiendo el mismo ciclo todos los días. ¿A qué se debe?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-9')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-9">
+              <strong>Diagnóstico: CICLICIDAD / PERIODICIDAD</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Causa real:</strong> Cambios térmicos ambientales (la planta se calienta al mediodía y se enfría de noche) o fatiga del operador al final del turno. Requiere climatización o pausas activas.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-9"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 10: NÚMEROS (EL ERROR DEL SOBREAJUSTE / TAMPERING) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-10">
+          <div class="case-media-box">
+            <table class="mini-analysis-table">
+              <thead><tr><th>Operador</th><th>Estrategia</th><th>Rango Promedio</th><th>Piezas Defectuosas</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Operador A</strong></td>
+                  <td>No toca la máquina si está dentro de límites</td>
+                  <td><strong>0.8 cm</strong></td>
+                  <td style="color: var(--green); font-weight: 700;">0 %</td>
+                </tr>
+                <tr>
+                  <td><strong>Operador B</strong></td>
+                  <td>Mueve la perilla en cada tiro si se desvía 0.2 cm</td>
+                  <td style="color: var(--red); font-weight: 700;"><strong>3.2 cm</strong></td>
+                  <td style="color: var(--red); font-weight: 700;">14 %</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <span class="badge-case-type badge-numbers">Caso #10 • Análisis Numérico</span>
+            <h3 class="case-question-title">¿Por qué el operador más atento produjo más defectos?</h3>
+            <p class="case-description">
+              El Operador B intenta "corregir" la máquina en cada tiro para dejarlo perfecto, pero su variación cuadruplicó a la del Operador A. ¿Cómo se llama este fenómeno en calidad?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-10')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-10">
+              <strong>Diagnóstico: SOBREAJUSTE (Efecto Tampering de Deming)</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Explicación:</strong> Reaccionar ante la variación natural (causa común) como si fuera un fallo solo introduce variabilidad artificial al sistema. <em>"En calidad, no toques lo que está bajo control natural"</em>.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-10"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 11: GRÁFICO (ESTRATIFICACIÓN / "PEGADO AL CENTRO") -->
+        <div class="case-card-layout case-card-panel" id="case-panel-11">
+          <div class="case-media-box">
+            <canvas id="canvas-case-11" width="420" height="230"></canvas>
+          </div>
+          <div>
+            <span class="badge-case-type badge-graph">Caso #11 • Análisis Gráfico</span>
+            <h3 class="case-question-title">Puntos sospechosamente pegados a la línea central</h3>
+            <p class="case-description">
+              15 puntos consecutivos están extremadamente cerca de la línea media, casi sin oscilación. ¿Por qué esto también es una señal de anomalía estadística?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-11')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-11">
+              <strong>Diagnóstico: ESTRATIFICACIÓN (Hugging the center line)</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Explicación:</strong> No tener variación natural es sospechoso. Típicamente ocurre cuando se mezclan datos de dos máquinas diferentes en el mismo subgrupo (se promedian los extremos y se anulan artificialmente) o datos inventados.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-11"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CASO 12: NÚMEROS (PLAN DE CAPACITACIÓN) -->
+        <div class="case-card-layout case-card-panel" id="case-panel-12">
+          <div class="case-media-box">
+            <table class="mini-analysis-table">
+              <thead><tr><th>Inspector</th><th>Tiro 1</th><th>Tiro 2</th><th>Tiro 3</th><th>Tiro 4</th><th>Promedio</th><th>Rango</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Operador 1</strong></td><td>9.9</td><td>10.1</td><td>10.0</td><td>10.0</td><td>10.0 cm</td><td style="color: var(--green); font-weight: 700;">0.2 cm</td></tr>
+                <tr><td><strong>Operador 2</strong></td><td>7.0</td><td>13.0</td><td>8.0</td><td>12.0</td><td>10.0 cm</td><td style="color: var(--red); font-weight: 700;">6.0 cm</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <span class="badge-case-type badge-numbers">Caso #12 • Análisis Numérico</span>
+            <h3 class="case-question-title">¿A cuál operador envías a curso urgente y sobre qué tema?</h3>
+            <p class="case-description">
+              Ambos operadores reportan exactamente 10.0 cm de promedio. ¿Qué tema de capacitación necesita el operador problemático?
+            </p>
+            <button class="btn-reveal-answer" onclick="toggleAnswer('ans-12')">🔍 Revelar Diagnóstico Oficial</button>
+            <div class="answer-box" id="ans-12">
+              <strong>Diagnóstico: CAPACITAR AL OPERADOR 2 EN ESTANDARIZACIÓN</strong>
+              <p style="margin-top: 4px; font-size: 0.9rem;">
+                <strong>Tema clave:</strong> Estandarización de método de sujeción y lectura. No tiene problemas de centrado, sino falta de repetibilidad en su postura, apoyo o fuerza al medir.
+              </p>
+              <div class="award-points-bar">
+                <span style="font-weight: 700; font-size: 0.85rem; color: var(--blue-light);">Calificar Respuesta (0, +10, +35, +50, +100 pts):</span>
+                <span id="assign-case-12"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- JUEGO 2: SEGUIDOR DE TRAYECTORIA Y PULSO (15 SEGUNDOS) -->
+    <!-- ========================================================= -->
+    <section id="panel-game2" class="view-panel">
+      <div class="game-two-layout">
+        
+        <!-- ARENA DEL SEGUIDOR DE TRAYECTORIA -->
+        <div class="tracker-arena">
+          <div class="tracker-header">
+            <div>
+              <h2 style="font-size: 1.4rem; font-weight: 800;">El Pulso del Operador (Seguidor de Proceso)</h2>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">
+                Mueve el mouse arriba y abajo para mantener el cursor sobre la línea de calidad en movimiento durante <strong>15 segundos</strong>.
+              </p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Tiempo:</div>
+                <div class="timer-display" id="game-timer">15.00s</div>
+              </div>
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Precisión en Vivo:</div>
+                <div class="live-accuracy-display" id="live-accuracy">100.000%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lienzo interactivo del juego -->
+          <div class="tracker-canvas-box" id="tracker-canvas-container">
+            <canvas id="canvas-tracker"></canvas>
+          </div>
+
+          <div class="tracker-controls">
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              Equipo Activo: <strong id="lbl-active-player" style="color: var(--blue-light);">Línea Alfa</strong>
+            </div>
+            <button class="btn-start-game" id="btn-start-tracker" onclick="startTrackingGame()">
+              ▶ Iniciar Prueba (15 Segundos)
+            </button>
+          </div>
+
+          <!-- Tarjeta con resultado final y análisis estadístico completo -->
+          <div class="game-result-card" id="game-result-box">
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+              <div>
+                <span style="font-weight: 800; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                  Diagnóstico Estadístico del Operador (15 Segundos)
+                </span>
+                <div class="final-score-huge" id="lbl-final-score">0.000 pts</div>
+                <div id="lbl-final-verdict" style="font-weight: 700; font-size: 0.95rem; color: var(--green);">
+                  ⭐ Proceso Bajo Control (Pulso Estable)
+                </div>
+              </div>
+              
+              <div style="text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
+                <button class="btn-give-points" style="background: var(--blue); color: #fff; border: none; padding: 9px 18px; font-size: 0.95rem; font-weight: 800;" onclick="saveTrackingScoreToActiveTeam()">
+                  💾 Registrar este Puntaje al Equipo
+                </button>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">
+                  Pesa 40% en la Clasificación General
+                </span>
+              </div>
+            </div>
+
+            <!-- CUADRÍCULA DE DATOS ESTADÍSTICOS: MEDIA, DESVIACIÓN, TENDENCIA, RANGO -->
+            <div class="metrics-stat-grid">
+              
+              <!-- Media del Error -->
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">🎯 Media del Desvío (X̄)</div>
+                <div class="metric-stat-val" id="stat-mean-val">0.000 px</div>
+                <div class="metric-stat-desc" id="stat-mean-desc">Desvío promedio del centro</div>
+              </div>
+
+              <!-- Desviación Estándar -->
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">📐 Desviación Estándar (σ)</div>
+                <div class="metric-stat-val" id="stat-std-val" style="color: var(--amber);">0.000 px</div>
+                <div class="metric-stat-desc" id="stat-std-desc">Variabilidad del pulso</div>
+              </div>
+
+              <!-- Tendencia -->
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">📈 Tendencia (15s)</div>
+                <div class="metric-stat-val" id="stat-trend-val" style="font-size: 1.15rem;">Estable</div>
+                <div class="metric-stat-desc" id="stat-trend-desc">Comparativa 1ra vs 2da mitad</div>
+              </div>
+
+              <!-- Rango -->
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">📏 Rango de Oscilación (R)</div>
+                <div class="metric-stat-val" id="stat-range-val" style="color: var(--purple);">0.000 px</div>
+                <div class="metric-stat-desc" id="stat-range-desc">Amplitud total del error</div>
+              </div>
+
+            </div>
+
+            <!-- MINI GRÁFICA DE CONTROL DEL INTENTO REAL (RUN CHART) -->
+            <div style="margin-top: 10px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 0.8rem; color: var(--text-muted);">
+                <span>📊 Registro Gráfico Continuo del Intento (Trayectoria Real vs Objetivo):</span>
+                <span><span style="color: #10b981;">●</span> Objetivo | <span style="color: #38bdf8;">●</span> Cursor del Operador</span>
+              </div>
+              <div class="run-chart-box">
+                <canvas id="canvas-run-summary" width="700" height="140"></canvas>
+              </div>
+            </div>
+
+            <!-- EXPLICACIÓN PEDAGÓGICA SPC -->
+            <div style="background: rgba(16, 185, 129, 0.08); border-left: 3px solid var(--green); border-radius: 6px; padding: 8px 12px; font-size: 0.8rem; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">
+              💡 <strong>Interpretación SPC:</strong> La <strong style="color: var(--blue-light);">Media (X̄)</strong> indica si el operador estuvo centrado o sesgado; la <strong style="color: var(--amber);">Desviación (σ)</strong> mide la variabilidad/estabilidad de su pulso; la <strong style="color: var(--green);">Tendencia</strong> analiza causas asignables (fatiga vs adaptación entre 1ra y 2da mitad); y el <strong style="color: var(--purple);">Rango (R)</strong> la oscilación pico a pico.
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PANEL LATERAL: CLASIFICACIÓN DEL PULSO -->
+        <aside class="podium-box">
+          <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.75rem;">
+            🎯 Clasificación de Pulso (3 Decimales)
+          </h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Permite desempatar a los equipos según su habilidad para seguir el proceso sin desviarse.
+          </p>
+
+          <div id="tracker-leaderboard-list">
+            <!-- Se llena con JS -->
+          </div>
+
+          <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+            <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">Seleccionar Equipo para Jugar:</div>
+            <div id="team-selector-chips" style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <!-- Se llena con JS -->
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- JUEGO 3: AUDITORÍA DE GRÁFICA (15 DÍAS) -->
+    <!-- ========================================================= -->
+    <section id="panel-game3" class="view-panel">
+      <div class="game3-layout">
+        
+        <div class="audit-chart-card">
+          <!-- ENCABEZADO DE JUEGO 3 -->
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: var(--purple); color: #fff; font-size: 0.75rem; font-weight: 900; padding: 2px 10px; border-radius: 20px;">
+                  FASE DE AUDITORÍA
+                </span>
+                <h2 style="font-size: 1.5rem; font-weight: 900;">Juego 3: Auditoría e Interpretación (15 Días)</h2>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">
+                Analiza el comportamiento cronológico del proceso a lo largo de 15 días con sus <strong>Límites de Especificación (LIE / LSE)</strong> y <strong>Media (X̄)</strong> para responder las 10 preguntas clave.
+              </p>
+            </div>
+
+            <!-- CONTROLES DE ESCENARIO Y SOLUCIONES -->
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              <select id="sel-audit-scenario" class="btn-header" style="padding: 7px 12px; font-weight: 700; cursor: pointer;" onchange="changeAuditScenario(this.value)">
+                <option value="creciente">Escenario 1: Tendencia Creciente & Desgaste</option>
+                <option value="especial">Escenario 2: Causa Especial Fuera de Tolerancia</option>
+                <option value="decreciente">Escenario 3: Tendencia Decreciente</option>
+                <option value="aleatorio">🎲 Generar Escenario Aleatorio</option>
+              </select>
+
+              <button class="btn-header" onclick="generateNewRandomAuditScenario()" title="Generar nuevos datos aleatorios manteniendo coherencia SPC">
+                🎲 Aleatorio
+              </button>
+
+              <button class="btn-header" id="btn-toggle-solutions" onclick="toggleAllAuditSolutions()" style="color: var(--blue-light); border-color: var(--blue-light);">
+                🔍 Revelar Solución Oficial
+              </button>
+            </div>
+          </div>
+
+          <!-- LÍMITES DE ESPECIFICACIÓN VISIBLES -->
+          <div class="audit-limits-bar">
+            <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Límites de Ingeniería:</span>
+            <span class="audit-limit-pill pill-lse">🔴 LSE = <span id="lbl-lse-val">24.0</span> mm (Límite Superior Especificación)</span>
+            <span class="audit-limit-pill pill-media">🔵 Media Nominal (X̄) = <span id="lbl-media-val">20.0</span> mm (Objetivo Central)</span>
+            <span class="audit-limit-pill pill-lie">🔴 LIE = <span id="lbl-lie-val">16.0</span> mm (Límite Inferior Especificación)</span>
+          </div>
+
+          <!-- LIENZO DE LA GRÁFICA -->
+          <div class="audit-chart-wrapper" id="audit-chart-container">
+            <canvas id="canvas-game3-audit"></canvas>
+          </div>
+
+          <!-- TABLA DE DATOS CRONOLÓGICOS (15 DÍAS) -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+                📋 Registro Diario de Medición (15 Días):
+              </span>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">
+                <span style="color: #ef4444; font-weight: 700;">● En rojo:</span> Valores que violan límites de especificación
+              </span>
+            </div>
+            <div class="audit-table-wrapper">
+              <table class="audit-data-table" id="audit-data-table">
+                <!-- Se llena con JS -->
+              </table>
+            </div>
+          </div>
+
+          <!-- ASIGNACIÓN DE PUNTAJE DE JUEGO 3: LISTADO DE EQUIPOS COMO EN JUEGO 1 -->
+          <div style="background: var(--bg-card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; margin-top: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="font-weight: 800; font-size: 0.95rem; color: var(--purple); text-transform: uppercase;">
+                  🏆 Calificar Respuesta de Auditoría (0, +10, +35, +50, +100 pts)
+                </span>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                  Califica directamente a cada equipo (Peso 30% en la Clasificación General).
+                </p>
+              </div>
+              <span style="font-size: 0.78rem; color: var(--green); background: rgba(16, 185, 129, 0.15); padding: 4px 10px; border-radius: 15px; font-weight: 700;">
+                ● Guardado automático en JSON
+              </span>
+            </div>
+
+            <!-- Listado de equipos y botones idéntico al Juego 1 -->
+            <div id="audit-teams-award-list" style="display: flex; flex-direction: column; gap: 8px;">
+              <!-- Se llena dinámicamente con JS -->
+            </div>
+          </div>
+
+          <!-- LAS 10 PREGUNTAS DE AUDITORÍA -->
+          <div style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <h3 style="font-size: 1.2rem; font-weight: 900;">
+                📝 Cuestionario de Auditoría (10 Preguntas de Análisis)
+              </h3>
+              <span style="font-size: 0.8rem; color: var(--text-muted);">
+                Usa el botón <strong>"🔍 Revelar Solución Oficial"</strong> arriba para verificar los cálculos y diagnósticos paso a paso.
+              </span>
+            </div>
+
+            <div class="audit-questions-grid" id="audit-questions-container">
+              <!-- Se genera con JS con las 10 preguntas y sus soluciones exactas -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- JUEGO 4: EL CRONÓMETRO DE PRECISIÓN (10.000 SEGUNDOS) -->
+    <!-- ========================================================= -->
+    <section id="panel-game4" class="view-panel">
+      <div class="game-four-layout">
+        
+        <!-- ARENA DEL CRONÓMETRO -->
+        <div class="chrono-arena">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+            <div style="text-align: left;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="background: var(--amber); color: #000; font-size: 0.75rem; font-weight: 900; padding: 2px 10px; border-radius: 20px;">
+                  CONTROL & EXACTITUD TEMPORAL
+                </span>
+                <h2 style="font-size: 1.5rem; font-weight: 900;">Juego 4: El Cronómetro (10.000s)</h2>
+              </div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">
+                Detén el cronómetro lo más cercano posible a exactamente <strong>10.000 segundos</strong>. Con la <strong>Barra Espaciadora</strong> se detiene. Al parar, <strong>se congela</strong> hasta que decidas reiniciar.
+              </p>
+            </div>
+
+            <!-- BOTONES RÁPIDOS -->
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button class="btn-header" onclick="resetChrono()" title="Reiniciar cronómetro para un nuevo intento">
+                🔄 Reiniciar
+              </button>
+            </div>
+          </div>
+
+          <!-- LÍMITES DE TOLERANCIA SPC -->
+          <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 1.25rem;">
+            <span style="padding: 4px 12px; background: rgba(56, 189, 248, 0.12); border: 1px solid var(--blue-light); border-radius: 20px; font-size: 0.82rem; font-weight: 800; color: var(--blue-light);">
+              🎯 Meta Exacta: 10.000 s
+            </span>
+            <span style="padding: 4px 12px; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--green); border-radius: 20px; font-size: 0.82rem; font-weight: 700; color: var(--green);">
+              🟢 Seis Sigma: ±0.050s (9.950s - 10.050s)
+            </span>
+            <span style="padding: 4px 12px; background: rgba(245, 158, 11, 0.12); border: 1px solid var(--amber); border-radius: 20px; font-size: 0.82rem; font-weight: 700; color: var(--amber);">
+              🟡 Tolerancia: ±0.200s
+            </span>
+            <span style="padding: 4px 12px; background: rgba(239, 68, 68, 0.12); border: 1px solid var(--red); border-radius: 20px; font-size: 0.82rem; font-weight: 700; color: var(--red);">
+              🔴 Fuera de Límite: >±0.500s
+            </span>
+          </div>
+
+          <!-- DISPLAY DEL CRONÓMETRO DIGITAL CONGELABLE -->
+          <div id="chrono-display-box" class="chrono-display-card">
+            <div id="chrono-timer-digits" class="chrono-digits">0.000 s</div>
+            <div>
+              <span id="chrono-badge" class="chrono-state-badge badge-idle">
+                ⚪ Listo para iniciar — Presiona Iniciar o Barra Espaciadora
+              </span>
+            </div>
+          </div>
+
+          <!-- NOTA DE CONTROL CON TECLADO -->
+          <div style="background: rgba(2, 132, 199, 0.1); border-left: 4px solid var(--blue-light); padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; text-align: left; margin-bottom: 1.25rem;">
+            ⌨️ <strong>Control con Teclado:</strong> Presiona la <strong>Barra Espaciadora</strong> para iniciar o detener. Una vez detenido, el cronómetro <strong>queda totalmente congelado</strong> y no avanzará hasta que presiones <em>"Reiniciar / Nuevo Intento"</em>.
+          </div>
+
+          <!-- BOTONES DE ACCIÓN -->
+          <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+            <button id="btn-chrono-start" class="btn-roll-dice" style="padding: 12px 30px; font-size: 1.1rem; background: var(--green); border-color: var(--green);" onclick="startChrono()">
+              ▶ Iniciar Cronómetro (Espacio)
+            </button>
+            <button id="btn-chrono-stop" class="btn-roll-dice" style="padding: 12px 30px; font-size: 1.1rem; background: #ef4444; border-color: #ef4444; display: none;" onclick="stopChrono()">
+              ⏹️ CONGELAR EN 10s (Espacio)
+            </button>
+            <button id="btn-chrono-reset" class="btn-header" style="padding: 12px 24px; font-size: 1rem;" onclick="resetChrono()">
+              🔄 Reiniciar / Nuevo Intento
+            </button>
+          </div>
+
+          <!-- TARJETA DE RESULTADO CUANDO SE CONGELA -->
+          <div id="chrono-result-box" class="game-result-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 1.6rem;">❄️</span>
+                <div style="text-align: left;">
+                  <h4 style="font-size: 1.15rem; font-weight: 800; color: var(--amber);">Cronómetro Congelado</h4>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Resultado registrado con resolución de 3 decimales</span>
+                </div>
+              </div>
+              <div id="chrono-verdict-pill" style="font-size: 0.85rem; font-weight: 800; padding: 4px 12px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: var(--green); border: 1px solid var(--green);">
+                🎯 Exactitud Seis Sigma
+              </div>
+            </div>
+
+            <div class="metrics-stat-grid" style="grid-template-columns: repeat(4, 1fr);">
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">⏱️ Tiempo Detenido</div>
+                <div class="metric-stat-val" id="chrono-stat-time" style="color: var(--amber);">10.000 s</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">3 decimales exactos</div>
+              </div>
+
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">🎯 Objetivo Nominal</div>
+                <div class="metric-stat-val" style="color: var(--blue-light);">10.000 s</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">Meta estándar de proceso</div>
+              </div>
+
+              <div class="metric-stat-card">
+                <div class="metric-stat-title">📉 Desviación (Error)</div>
+                <div class="metric-stat-val" id="chrono-stat-diff" style="color: var(--purple);">0.000 s</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;" id="chrono-stat-diff-desc">Exacto</div>
+              </div>
+
+              <div class="metric-stat-card" style="border-color: var(--green);">
+                <div class="metric-stat-title">🏆 Puntaje Asignable</div>
+                <div class="metric-stat-val" id="chrono-stat-score" style="color: var(--green);">100.000 pts</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">Base 100 ponderable</div>
+              </div>
+            </div>
+
+            <!-- GUARDADO DE PUNTAJE EN EL EQUIPO ACTIVO -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; flex-wrap: wrap; gap: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 12px 16px; border-radius: 8px;">
+              <div style="text-align: left;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">Guardar este puntaje para:</span>
+                <strong id="lbl-active-chrono-team" style="font-size: 1.05rem; color: var(--blue-light); margin-left: 6px;">Línea Alfa</strong>
+                <span style="font-size: 0.75rem; color: var(--green); margin-left: 8px;">(Peso 20% en Clasificación)</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-roll-dice" style="padding: 8px 18px; font-size: 0.9rem;" onclick="saveChronoScoreToActiveTeam()">
+                  💾 Guardar Puntaje en Equipo
+                </button>
+                <button class="btn-header" onclick="resetChrono()">
+                  🔄 Nuevo Intento
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PANEL LATERAL: RANKING Y SELECTOR DE EQUIPO -->
+        <div class="tracker-leaderboard-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+            <h3 style="font-size: 1.1rem; font-weight: 800;">⏱️ Podio por Tiempo (10.000s)</h3>
+            <span style="font-size: 0.75rem; color: var(--amber); font-weight: 700;">Más cercano a 10s</span>
+          </div>
+
+          <div id="chrono-leaderboard-list">
+            <!-- Renderizado con JS -->
+          </div>
+
+          <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">
+              Equipo en Turno para Jugar:
+            </span>
+            <div id="chrono-team-chips" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+              <!-- Chips de selección con JS -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- PESTAÑA 5: PODIO GENERAL & GESTIÓN DE EQUIPOS -->
+    <!-- ========================================================= -->
+    <section id="panel-podium" class="view-panel">
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; max-width: 1050px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);">
+        
+        <!-- ENCABEZADO Y CONTROLES CRUD / JSON -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2 style="font-size: 1.6rem; font-weight: 900;">🏆 Podio General & Gestión de Participantes</h2>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+              Ponderación oficial: <strong style="color: var(--blue-light);">30% J1 (Casos)</strong> + <strong style="color: var(--amber);">25% J2 (Pulso)</strong> + <strong style="color: var(--purple);">25% J3 (Auditoría)</strong> + <strong style="color: var(--green);">20% J4 (Cronómetro 10s)</strong>.
+            </p>
+          </div>
+
+          <!-- BOTONES DE ACCIÓN CRUD Y PERSISTENCIA JSON -->
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(16, 185, 129, 0.12); border: 1px solid var(--green); border-radius: 8px; font-size: 0.8rem; font-weight: 700; color: var(--green);">
+              ● Base JSON Activa (Guardado Automático)
+            </div>
+            <button class="btn-roll-dice" style="padding: 8px 16px; font-size: 0.85rem;" onclick="openAddTeamModal()">
+              ➕ Nuevo Participante
+            </button>
+            <button class="btn-header" onclick="exportTeamsJSON()" title="Descargar copia del archivo JSON">
+              💾 Descargar Copia JSON
+            </button>
+            <label class="btn-header" style="cursor: pointer;" title="Cargar archivo JSON">
+              📂 Cargar JSON
+              <input type="file" id="json-file-input" accept=".json" style="display: none;" onchange="importTeamsJSON(event)">
+            </label>
+            <button class="btn-header" style="color: var(--amber); border-color: rgba(245, 158, 11, 0.4);" onclick="resetDefaultTeams()" title="Restablecer puntajes a 0 y 3 equipos por defecto">
+              🔄 Restablecer a 0
+            </button>
+          </div>
+        </div>
+
+        <!-- FORMULA EXPLICADA -->
+        <div style="background: rgba(2, 132, 199, 0.1); border-left: 4px solid var(--blue-light); padding: 10px 14px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            📐 <strong>Fórmula Ponderada Oficial (4 Juegos):</strong> 
+            <code>Puntaje Final = (J1 × 0.30) + (J2 × 0.25) + (J3 × 0.25) + (J4 × 0.20)</code>
+          </div>
+          <span style="font-size: 0.8rem; color: var(--text-muted);">
+            Todos los puntajes y equipos se guardan continuamente en JSON en todo momento.
+          </span>
+        </div>
+
+        <!-- TABLA DE PODIO / CLASIFICACIÓN CON CRUD -->
+        <div id="grand-leaderboard-table">
+          <!-- Renderizado con JS -->
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE CRUD: CREAR / EDITAR PARTICIPANTE -->
+  <div id="modal-team-crud" class="modal-overlay">
+    <div class="modal-card">
+      <h3 id="crud-modal-title" style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">Editar Participante</h3>
+      <input type="hidden" id="crud-team-id" value="">
+      
+      <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-top: 12px;">
+        Nombre del Equipo / Persona:
+      </label>
+      <input type="text" id="crud-team-name" class="input-crud-text" placeholder="Ej. Línea Alfa / Juan Pérez">
+
+      <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-top: 12px;">
+        Puntaje Juego 1 (Análisis de Casos - Peso 30%):
+      </label>
+      <input type="number" id="crud-team-j1" class="input-crud-text" min="0" step="5" placeholder="Puntos acumulados (ej. 75)">
+
+      <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-top: 12px;">
+        Puntaje Juego 2 (Pulso de 0 a 100 - Peso 25%):
+      </label>
+      <input type="number" id="crud-team-j2" class="input-crud-text" min="0" max="100" step="0.001" placeholder="Ej. 92.418">
+
+      <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-top: 12px;">
+        Puntaje Juego 3 (Auditoría 15 Días de 0 a 100 - Peso 25%):
+      </label>
+      <input type="number" id="crud-team-j3" class="input-crud-text" min="0" max="100" step="1" placeholder="Ej. 80">
+
+      <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); display: block; margin-top: 12px;">
+        Puntaje Juego 4 (El Cronómetro 10s de 0 a 100 - Peso 20%):
+      </label>
+      <input type="number" id="crud-team-j4" class="input-crud-text" min="0" max="100" step="0.001" placeholder="Ej. 98.400">
+
+      <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+        <button class="btn-header" onclick="closeCrudModal()">Cancelar</button>
+        <button class="btn-roll-dice" style="padding: 8px 18px; font-size: 0.95rem;" onclick="saveCrudTeam()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACIÓN TOAST FLOTANTE -->
+  <div id="toast-msg" class="toast-notification"></div>
+
+  <!-- ========================================================= -->
+  <!-- JAVASCRIPT DEL SISTEMA DE JUEGOS -->
+  <!-- ========================================================= -->
+  <script>
+    // --- PERSISTENCIA EN JSON Y LOCALSTORAGE ---
+    const STORAGE_KEY = 'spc_torneo_equipos_v4';
+
+    const DEFAULT_TEAMS = [
+      { id: 1, name: 'Línea Alfa', triviaPoints: 0, pulseScore: 0, pulseStats: null, auditScore: 0, chronoScore: 0, chronoTime: null, chronoDiff: null },
+      { id: 2, name: 'Planta Delta', triviaPoints: 0, pulseScore: 0, pulseStats: null, auditScore: 0, chronoScore: 0, chronoTime: null, chronoDiff: null },
+      { id: 3, name: 'Taller Mecatrónica', triviaPoints: 0, pulseScore: 0, pulseStats: null, auditScore: 0, chronoScore: 0, chronoTime: null, chronoDiff: null }
+    ];
+
+    let teams = [];
+    let activeTeamId = 1;
+    let activeChronoTeamId = 1;
+
+    function saveTeamsToStorage() {
+      try {
+        const payload = {
+          version: '4.0',
+          lastUpdated: new Date().toISOString(),
+          weights: { game1: 0.30, game2: 0.25, game3: 0.25, game4: 0.20 },
+          teams: teams
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      } catch (e) {
+        console.error('Error guardando en localStorage', e);
+      }
+    }
+
+    function loadTeamsFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.teams) && parsed.teams.length > 0) {
+            teams = parsed.teams.map(t => ({
+              ...t,
+              triviaPoints: Number(t.triviaPoints) || 0,
+              pulseScore: Number(t.pulseScore) || 0,
+              pulseStats: t.pulseStats || null,
+              auditScore: Number(t.auditScore) || 0,
+              chronoScore: Number(t.chronoScore) || 0,
+              chronoTime: t.chronoTime !== undefined ? t.chronoTime : null,
+              chronoDiff: t.chronoDiff !== undefined ? t.chronoDiff : null
+            }));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Error leyendo de localStorage', e);
+      }
+      teams = JSON.parse(JSON.stringify(DEFAULT_TEAMS));
+      saveTeamsToStorage();
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast-msg');
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      clearTimeout(window._toastTimeout);
+      window._toastTimeout = setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3200);
+    }
+
+    // --- CAMBIO DE PESTAÑAS PRINCIPALES ---
+    function switchMainTab(tabKey) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+      document.getElementById('tab-' + tabKey).classList.add('active');
+      document.getElementById('panel-' + tabKey).classList.add('active');
+
+      if (tabKey === 'game1') {
+        renderAllCaseCharts();
+        renderAwardButtons();
+      } else if (tabKey === 'game2') {
+        initTrackerCanvas();
+        renderTrackerLeaderboard();
+      } else if (tabKey === 'game3') {
+        initAuditGame();
+        renderAuditAwardButtons();
+      } else if (tabKey === 'game4') {
+        renderChronoLeaderboard();
+      } else if (tabKey === 'podium') {
+        renderGrandPodium();
+      }
+    }
+
+    // --- MODO OSCURO / CLARO PARA PROYECTOR ---
+    function toggleTheme() {
+      document.body.classList.toggle('theme-light');
+      renderAllCaseCharts();
+      renderAuditChart();
+    }
+
+    // =========================================================
+    // JUEGO 1: DADO VIRTUAL Y CASOS 1 AL 12
+    // =========================================================
+    let currentSelectedCase = null;
+
+    function rollInspectorDice() {
+      const dice = document.getElementById('visual-dice');
+      dice.classList.add('rolling');
+
+      // Animación de números cambiando rápidamente
+      let rolls = 0;
+      const interval = setInterval(() => {
+        dice.innerText = Math.floor(Math.random() * 12) + 1;
+        rolls++;
+        if (rolls > 14) {
+          clearInterval(interval);
+          dice.classList.remove('rolling');
+          const finalCase = Math.floor(Math.random() * 12) + 1;
+          dice.innerText = finalCase;
+          selectCase(finalCase);
+        }
+      }, 60);
+    }
+
+    function selectCase(caseNum) {
+      currentSelectedCase = caseNum;
+
+      // Ocultar pantalla de bienvenida/espera
+      const emptyState = document.getElementById('case-empty-state');
+      if (emptyState) emptyState.classList.remove('active');
+
+      // Ocultar todos los paneles de casos
+      document.querySelectorAll('.case-card-panel').forEach((panel) => {
+        panel.classList.remove('active');
+      });
+
+      // Mostrar ÚNICAMENTE el caso seleccionado por el dado
+      const activePanel = document.getElementById('case-panel-' + caseNum);
+      if (activePanel) {
+        activePanel.classList.add('active');
+        // Asegurar que la solución comience cerrada para que piensen primero
+        const ans = activePanel.querySelector('.answer-box');
+        if (ans) ans.classList.remove('visible');
+      }
+
+      renderAllCaseCharts();
+    }
+
+    function toggleAnswer(answerId) {
+      const el = document.getElementById(answerId);
+      if (el) el.classList.toggle('visible');
+    }
+
+    function renderAwardButtons() {
+      for (let i = 1; i <= 12; i++) {
+        const box = document.getElementById(`assign-case-${i}`);
+        if (!box) continue;
+        box.innerHTML = '';
+
+        teams.forEach(t => {
+          const row = document.createElement('div');
+          row.className = 'team-eval-row';
+          row.innerHTML = `
+            <div>
+              <strong style="color: var(--text-main); font-size: 0.95rem;">${t.name}</strong>
+              <span style="font-size: 0.8rem; color: var(--blue-light); margin-left: 6px;">(J1: ${t.triviaPoints || 0} pts)</span>
+            </div>
+            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+              <button class="btn-score-chip zero" onclick="awardPointsToTeam(${t.id}, 0)" title="Respuesta incorrecta">0</button>
+              <button class="btn-score-chip" onclick="awardPointsToTeam(${t.id}, 10)" title="Intento básico / Parcial">+10</button>
+              <button class="btn-score-chip" onclick="awardPointsToTeam(${t.id}, 35)" title="Respuesta aceptable">+35</button>
+              <button class="btn-score-chip" onclick="awardPointsToTeam(${t.id}, 50)" title="Buen análisis">+50</button>
+              <button class="btn-score-chip" onclick="awardPointsToTeam(${t.id}, 100)" title="Respuesta perfecta">+100</button>
+            </div>
+          `;
+          box.appendChild(row);
+        });
+      }
+    }
+
+    function awardPointsToTeam(teamId, pts) {
+      const team = teams.find(t => t.id === teamId);
+      if (!team) return;
+      team.triviaPoints = (team.triviaPoints || 0) + pts;
+      saveTeamsToStorage();
+      renderAwardButtons();
+      renderTrackerLeaderboard();
+      renderGrandPodium();
+      showToast(`✅ ${team.name}: +${pts} pts asignados en Juego 1 (Total J1: ${team.triviaPoints} pts)`);
+    }
+
+    // Render de gráficas SPC de los casos 1, 3, 5, 7, 9, 11
+    function renderAllCaseCharts() {
+      // Caso 1: Tendencia continua ascendente
+      drawGenericSPC('canvas-case-1', [9.8, 9.9, 10.1, 10.5, 11.1, 11.8, 12.5, 13.2], 10, 13.5, 6.5, '#ef4444');
+      // Caso 3: Racha sostenida abajo
+      drawGenericSPC('canvas-case-3', [9.1, 8.9, 9.2, 9.0, 8.8, 9.1, 8.9, 9.0], 10, 12.0, 8.0, '#8b5cf6');
+      // Caso 5: Punto fuera de límite
+      drawGenericSPC('canvas-case-5', [9.9, 10.2, 9.8, 10.0, 14.8, 10.1, 9.9, 10.0], 10, 13.0, 7.0, '#f59e0b');
+      // Caso 7: Rango disparado
+      drawGenericSPC('canvas-case-7', [1.2, 1.4, 1.1, 1.3, 7.8, 8.2, 6.9, 7.5], 2.0, 6.0, 0.0, '#0284c7');
+      // Caso 9: Ondulación cíclica
+      drawGenericSPC('canvas-case-9', [8.5, 10.0, 11.5, 10.0, 8.5, 10.0, 11.5, 10.0], 10, 13.0, 7.0, '#10b981');
+      // Caso 11: Estratificación pegada al centro
+      drawGenericSPC('canvas-case-11', [10.0, 10.05, 9.98, 10.02, 10.01, 9.99, 10.03, 10.0], 10, 13.0, 7.0, '#38bdf8');
+    }
+
+    function drawGenericSPC(canvasId, data, lc, lcs, lci, color) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const pad = 30;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const minY = Math.min(...data, lci) - 0.5;
+      const maxY = Math.max(...data, lcs) + 0.5;
+      const toY = (val) => pad + (maxY - val) / Math.max(1, (maxY - minY)) * (h - pad * 2);
+      const toX = (idx) => pad + (idx / Math.max(1, data.length - 1)) * (w - pad * 2);
+
+      // Límites superior e inferior
+      ctx.strokeStyle = '#ef4444';
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(pad, toY(lcs)); ctx.lineTo(w - pad, toY(lcs));
+      ctx.moveTo(pad, toY(lci)); ctx.lineTo(w - pad, toY(lci));
+      ctx.stroke();
+
+      // Línea Central
+      ctx.strokeStyle = '#10b981';
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(pad, toY(lc)); ctx.lineTo(w - pad, toY(lc));
+      ctx.stroke();
+
+      // Datos y curva
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      data.forEach((val, i) => {
+        const x = toX(i);
+        const y = toY(val);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Puntos
+      data.forEach((val, i) => {
+        const x = toX(i);
+        const y = toY(val);
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = (val > lcs || val < lci) ? '#ef4444' : color;
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+    }
+
+    // =========================================================
+    // JUEGO 2: SEGUIDOR DE TRAYECTORIA Y PULSO (15 SEGUNDOS)
+    // =========================================================
+    let isPlayingTracker = false;
+    let trackerStartTime = 0;
+    const GAME_DURATION_MS = 15000; // 15 Segundos
+    let animationFrameId = null;
+
+    let userMouseY = 190;
+    let accumulatedAccuracy = 0;
+    let frameCount = 0;
+    let lastFinalScore = 0;
+    let trackingSamples = [];
+    let lastTrackingStats = null;
+
+    function initTrackerCanvas() {
+      const canvas = document.getElementById('canvas-tracker');
+      const container = document.getElementById('tracker-canvas-container');
+      if (!canvas || !container) return;
+
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+
+      // Evento de seguimiento de mouse
+      container.onmousemove = (e) => {
+        const rect = container.getBoundingClientRect();
+        userMouseY = e.clientY - rect.top;
+      };
+
+      drawTrackerStaticScreen();
+    }
+
+    function drawTrackerStaticScreen() {
+      const canvas = document.getElementById('canvas-tracker');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Líneas de referencia
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, h * 0.2); ctx.lineTo(w, h * 0.2);
+      ctx.moveTo(0, h * 0.5); ctx.lineTo(w, h * 0.5);
+      ctx.moveTo(0, h * 0.8); ctx.lineTo(w, h * 0.8);
+      ctx.stroke();
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '14px Outfit';
+      ctx.textAlign = 'center';
+      ctx.fillText('Presiona "▶ Iniciar Prueba" y sigue la línea verde con tu mouse durante 15 segundos.', w / 2, h / 2 - 10);
+    }
+
+    function startTrackingGame() {
+      if (isPlayingTracker) return;
+
+      isPlayingTracker = true;
+      trackerStartTime = performance.now();
+      accumulatedAccuracy = 0;
+      frameCount = 0;
+      trackingSamples = [];
+      lastTrackingStats = null;
+
+      document.getElementById('btn-start-tracker').disabled = true;
+      document.getElementById('btn-start-tracker').style.opacity = '0.5';
+      document.getElementById('game-result-box').classList.remove('active');
+
+      runTrackerLoop();
+    }
+
+    function runTrackerLoop() {
+      const canvas = document.getElementById('canvas-tracker');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const now = performance.now();
+      const elapsed = now - trackerStartTime;
+      const remaining = Math.max(0, (GAME_DURATION_MS - elapsed) / 1000);
+
+      document.getElementById('game-timer').innerText = remaining.toFixed(2) + 's';
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Líneas fijas de límites de control
+      const lcsY = h * 0.2;
+      const lcY = h * 0.5;
+      const lciY = h * 0.8;
+
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(0, lcsY); ctx.lineTo(w, lcsY);
+      ctx.moveTo(0, lciY); ctx.lineTo(w, lciY);
+      ctx.stroke();
+
+      ctx.strokeStyle = '#38bdf8';
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(0, lcY); ctx.lineTo(w, lcY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Generar curva sinusoidal en movimiento continuo
+      const targetX = 140; // Posición horizontal fija del jugador
+      const speed = 0.0035;
+
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+
+      let targetYAtPlayer = lcY;
+
+      for (let x = 0; x <= w; x += 4) {
+        // Fórmula de la curva con ondas superpuestas
+        const wave = Math.sin((x * 0.015) + (now * speed)) * 60 + Math.sin((x * 0.035) + (now * speed * 1.5)) * 25;
+        const y = lcY + wave;
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+
+        if (Math.abs(x - targetX) < 4) {
+          targetYAtPlayer = y;
+        }
+      }
+      ctx.stroke();
+
+      // Línea vertical guía del jugador
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(targetX, 0); ctx.lineTo(targetX, h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Punto Objetivo exacto (verde)
+      ctx.beginPath();
+      ctx.arc(targetX, targetYAtPlayer, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#10b981';
+      ctx.fill();
+
+      // Punto del Usuario (controlado con mouse)
+      const diff = Math.abs(userMouseY - targetYAtPlayer);
+      const signedDiff = userMouseY - targetYAtPlayer;
+      const tolerance = 70; // Margen de error en píxeles
+      const instantAcc = Math.max(0, 100 - (diff / tolerance) * 100);
+
+      accumulatedAccuracy += instantAcc;
+      frameCount++;
+
+      // Guardar muestra para análisis estadístico (Media, Desviación, Tendencia, Rango)
+      trackingSamples.push({
+        time: elapsed,
+        targetY: targetYAtPlayer,
+        userY: userMouseY,
+        diff: diff,
+        signedDiff: signedDiff,
+        acc: instantAcc
+      });
+
+      const currentMeanAcc = accumulatedAccuracy / frameCount;
+      document.getElementById('live-accuracy').innerText = currentMeanAcc.toFixed(3) + '%';
+
+      // Dibujar cursor del usuario
+      ctx.beginPath();
+      ctx.arc(targetX, userMouseY, 9, 0, Math.PI * 2);
+      ctx.fillStyle = diff < 15 ? '#10b981' : (diff < 40 ? '#f59e0b' : '#ef4444');
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      if (elapsed < GAME_DURATION_MS) {
+        animationFrameId = requestAnimationFrame(runTrackerLoop);
+      } else {
+        finishTrackerGame(currentMeanAcc);
+      }
+    }
+
+    // --- CÁLCULO ESTADÍSTICO DE CALIDAD DEL OPERADOR ---
+    function calculateTrackingStats(samples, finalScore) {
+      if (!samples || samples.length === 0) {
+        return {
+          score: finalScore,
+          meanAbs: 0,
+          signedMean: 0,
+          stdDev: 0,
+          range: 0,
+          maxErr: 0,
+          trendText: 'Estable',
+          trendSub: 'Sin datos suficientes',
+          trendClass: 'color: var(--green);',
+          biasText: 'Centrado ideal',
+          verdictText: 'Proceso Bajo Control',
+          verdictColor: 'var(--green)'
+        };
+      }
+
+      const n = samples.length;
+      const absDiffs = samples.map(s => s.diff);
+      const signedDiffs = samples.map(s => s.signedDiff);
+
+      // 1. Media del Error Absoluto (Media X̄)
+      const meanAbs = absDiffs.reduce((a, b) => a + b, 0) / n;
+
+      // 1b. Media con signo (Sesgo)
+      const signedMean = signedDiffs.reduce((a, b) => a + b, 0) / n;
+
+      // 2. Desviación Estándar (σ)
+      const variance = absDiffs.reduce((acc, val) => acc + Math.pow(val - meanAbs, 2), 0) / Math.max(1, n - 1);
+      const stdDev = Math.sqrt(variance);
+
+      // 3. Rango (R)
+      const maxErr = Math.max(...absDiffs);
+      const minErr = Math.min(...absDiffs);
+      const range = maxErr - minErr;
+
+      // 4. Análisis de Tendencia (Trend: 1ra mitad vs 2da mitad)
+      const midPoint = GAME_DURATION_MS / 2;
+      const firstHalf = samples.filter(s => s.time <= midPoint);
+      const secondHalf = samples.filter(s => s.time > midPoint);
+
+      const h1Mean = firstHalf.length > 0 ? (firstHalf.reduce((a, s) => a + s.diff, 0) / firstHalf.length) : meanAbs;
+      const h2Mean = secondHalf.length > 0 ? (secondHalf.reduce((a, s) => a + s.diff, 0) / secondHalf.length) : meanAbs;
+
+      let trendText = 'Estable / Constante';
+      let trendSub = 'Variación uniforme a lo largo de los 15s';
+      let trendClass = 'color: var(--green);';
+
+      const diffPct = h1Mean > 0 ? ((h2Mean - h1Mean) / h1Mean) * 100 : 0;
+
+      if (diffPct > 15) {
+        trendText = 'Fatiga detectada';
+        trendSub = `+${diffPct.toFixed(1)}% error en la 2da mitad`;
+        trendClass = 'color: var(--amber);';
+      } else if (diffPct < -15) {
+        trendText = 'Mejora continua';
+        trendSub = `${Math.abs(diffPct).toFixed(1)}% más preciso al final`;
+        trendClass = 'color: var(--blue-light);';
+      } else {
+        trendText = 'Pulso Estable';
+        trendSub = 'Variación homogénea (±5% oscilación)';
+        trendClass = 'color: var(--green);';
+      }
+
+      // Sesgo espacial
+      let biasText = 'Centrado ideal sobre la línea';
+      if (signedMean > 3) {
+        biasText = `Sesgo hacia abajo (+${signedMean.toFixed(1)} px)`;
+      } else if (signedMean < -3) {
+        biasText = `Sesgo hacia arriba (${signedMean.toFixed(1)} px)`;
+      }
+
+      // Veredicto cualitativo
+      let verdictText = '⭐ Excelente Precisión (Bajo Control)';
+      let verdictColor = 'var(--green)';
+      if (finalScore < 70) {
+        verdictText = '🚨 Alta Dispersión (Proceso Inestable)';
+        verdictColor = 'var(--red)';
+      } else if (finalScore < 88) {
+        verdictText = '⚡ Precisión Aceptable (Variación Moderada)';
+        verdictColor = 'var(--amber)';
+      }
+
+      return {
+        score: finalScore,
+        meanAbs,
+        signedMean,
+        stdDev,
+        range,
+        maxErr,
+        trendText,
+        trendSub,
+        trendClass,
+        biasText,
+        verdictText,
+        verdictColor
+      };
+    }
+
+    // --- GRÁFICA RUN CHART CONTINUA DEL INTENTO (15s) ---
+    function drawRunSummaryChart(canvasId, samples) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas || !samples || samples.length === 0) return;
+      if (canvas.parentElement) {
+        canvas.width = canvas.parentElement.clientWidth || 700;
+        canvas.height = canvas.parentElement.clientHeight || 140;
+      }
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Fondo sutil
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+      ctx.fillRect(0, 0, w, h);
+
+      // Línea divisoria central de tiempo (7.5s)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px JetBrains Mono';
+      ctx.fillText('0s', 8, h - 6);
+      ctx.fillText('7.5s (Mitad)', w / 2 - 25, h - 6);
+      ctx.fillText('15s', w - 24, h - 6);
+
+      const toX = (time) => (time / GAME_DURATION_MS) * (w - 20) + 10;
+      
+      let allY = samples.map(s => s.targetY).concat(samples.map(s => s.userY));
+      const minY = Math.min(...allY) - 10;
+      const maxY = Math.max(...allY) + 10;
+      const toY = (y) => (y - minY) / Math.max(1, (maxY - minY)) * (h - 30) + 10;
+
+      // 1. Trayectoria Objetivo (Verde)
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      samples.forEach((s, idx) => {
+        const x = toX(s.time);
+        const y = toY(s.targetY);
+        if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // 2. Trayectoria Real del Usuario (Azul/Celeste)
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      samples.forEach((s, idx) => {
+        const x = toX(s.time);
+        const y = toY(s.userY);
+        if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // 3. Puntos de desviación alta (Rojos)
+      samples.forEach(s => {
+        if (s.diff > 45) {
+          const x = toX(s.time);
+          const y = toY(s.userY);
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+        }
+      });
+    }
+
+    function finishTrackerGame(finalScore) {
+      isPlayingTracker = false;
+      document.getElementById('btn-start-tracker').disabled = false;
+      document.getElementById('btn-start-tracker').style.opacity = '1';
+      document.getElementById('game-timer').innerText = '0.00s';
+
+      lastFinalScore = parseFloat(finalScore.toFixed(3));
+      lastTrackingStats = calculateTrackingStats(trackingSamples, lastFinalScore);
+
+      // 1. Mostrar puntaje y veredicto cualitativo
+      document.getElementById('lbl-final-score').innerText = lastFinalScore.toFixed(3) + ' pts';
+      const verdictEl = document.getElementById('lbl-final-verdict');
+      if (verdictEl) {
+        verdictEl.innerText = lastTrackingStats.verdictText;
+        verdictEl.style.color = lastTrackingStats.verdictColor;
+      }
+
+      // 2. Media del Desvío
+      document.getElementById('stat-mean-val').innerText = lastTrackingStats.meanAbs.toFixed(3) + ' px';
+      document.getElementById('stat-mean-desc').innerText = lastTrackingStats.biasText;
+
+      // 3. Desviación Estándar (σ)
+      document.getElementById('stat-std-val').innerText = lastTrackingStats.stdDev.toFixed(3) + ' px';
+      document.getElementById('stat-std-desc').innerText = 'Dispersión y repetibilidad de pulso';
+
+      // 4. Tendencia
+      const trendEl = document.getElementById('stat-trend-val');
+      trendEl.innerText = lastTrackingStats.trendText;
+      trendEl.style = lastTrackingStats.trendClass;
+      document.getElementById('stat-trend-desc').innerText = lastTrackingStats.trendSub;
+
+      // 5. Rango de Oscilación (R)
+      document.getElementById('stat-range-val').innerText = lastTrackingStats.range.toFixed(3) + ' px';
+      document.getElementById('stat-range-desc').innerText = `Error máx: ${lastTrackingStats.maxErr.toFixed(2)} px`;
+
+      // 6. Dibujar Run Chart del intento
+      drawRunSummaryChart('canvas-run-summary', trackingSamples);
+
+      const resultBox = document.getElementById('game-result-box');
+      resultBox.classList.add('active');
+      setTimeout(() => {
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 60);
+    }
+
+    function saveTrackingScoreToActiveTeam() {
+      const team = teams.find(t => t.id === activeTeamId);
+      if (team) {
+        team.pulseScore = lastFinalScore;
+        if (lastTrackingStats) {
+          team.pulseStats = {
+            mean: parseFloat(lastTrackingStats.meanAbs.toFixed(3)),
+            stdDev: parseFloat(lastTrackingStats.stdDev.toFixed(3)),
+            trend: lastTrackingStats.trendText,
+            range: parseFloat(lastTrackingStats.range.toFixed(3)),
+            bias: lastTrackingStats.biasText,
+            verdict: lastTrackingStats.verdictText
+          };
+        }
+        saveTeamsToStorage();
+        showToast(`✅ ${team.name}: Puntaje de ${lastFinalScore.toFixed(3)} pts guardado en Juego 2.`);
+        renderTrackerLeaderboard();
+        renderGrandPodium();
+      }
+    }
+
+    function renderTrackerLeaderboard() {
+      const container = document.getElementById('tracker-leaderboard-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Ordenar por puntaje de pulso
+      const sorted = [...teams].sort((a, b) => b.pulseScore - a.pulseScore);
+
+      sorted.forEach((t, idx) => {
+        const item = document.createElement('div');
+        item.className = 'team-item-podium';
+        const statsSub = t.pulseStats ? 
+          `<div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 3px; line-height: 1.35;">
+             X̄: <strong style="color: var(--blue-light);">${t.pulseStats.mean} px</strong> | 
+             σ: <strong style="color: var(--amber);">${t.pulseStats.stdDev} px</strong> | 
+             <strong style="color: var(--green);">${t.pulseStats.trend}</strong>
+           </div>` : '';
+
+        item.innerHTML = `
+          <div>
+            <strong>#${idx + 1} ${t.name}</strong>
+            ${statsSub}
+          </div>
+          <div class="team-score-exact">${(t.pulseScore || 0).toFixed(3)} pts</div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Selector de equipo para jugar
+      const chipContainer = document.getElementById('team-selector-chips');
+      chipContainer.innerHTML = '';
+      teams.forEach(t => {
+        const chip = document.createElement('button');
+        chip.className = 'btn-case-pill' + (t.id === activeTeamId ? ' active' : '');
+        chip.innerText = t.name;
+        chip.onclick = () => {
+          activeTeamId = t.id;
+          document.getElementById('lbl-active-player').innerText = t.name;
+          renderTrackerLeaderboard();
+        };
+        chipContainer.appendChild(chip);
+      });
+    }
+
+    // =========================================================
+    // JUEGO 3: AUDITORÍA DE GRÁFICA (15 DÍAS)
+    // =========================================================
+    let auditScenarioKey = 'creciente';
+    let auditData = [];
+    const AUDIT_LSE = 24.0;
+    const AUDIT_LIE = 16.0;
+    const AUDIT_NOMINAL = 20.0;
+    let auditAnswers = null;
+    let auditQuestionsChecked = [false, false, false, false, false, false, false, false, false, false];
+    let areAuditSolutionsRevealed = false;
+    let activeAuditTeamId = 1;
+
+    // Escenarios predefinidos de alta calidad pedagógica
+    const AUDIT_PRESETS = {
+      creciente: {
+        name: 'Escenario 1: Tendencia Creciente & Desgaste',
+        data: [18.5, 19.0, 20.0, 19.5, 20.0, 20.5, 20.0, 21.0, 21.8, 22.4, 22.0, 23.2, 24.6, 23.8, 25.4]
+      },
+      especial: {
+        name: 'Escenario 2: Causa Especial Fuera de Tolerancia',
+        data: [20.0, 19.5, 20.5, 20.0, 19.8, 25.6, 20.2, 20.0, 19.6, 20.4, 15.2, 20.1, 19.8, 20.5, 20.0]
+      },
+      decreciente: {
+        name: 'Escenario 3: Tendencia Decreciente',
+        data: [22.8, 22.0, 21.5, 21.0, 21.0, 20.5, 21.0, 19.8, 19.2, 18.5, 17.8, 17.0, 15.6, 16.2, 14.8]
+      }
+    };
+
+    function initAuditGame() {
+      if (!auditData || auditData.length === 0) {
+        setAuditScenario('creciente');
+      } else {
+        renderAuditChart();
+        renderAuditTable();
+        renderAuditQuestions();
+        renderAuditAwardButtons();
+      }
+    }
+
+    function changeAuditScenario(key) {
+      if (key === 'aleatorio') {
+        generateNewRandomAuditScenario();
+      } else {
+        setAuditScenario(key);
+      }
+    }
+
+    function setAuditScenario(key) {
+      auditScenarioKey = key;
+      const preset = AUDIT_PRESETS[key] || AUDIT_PRESETS.creciente;
+      auditData = [...preset.data];
+      auditAnswers = computeAuditAnswers(auditData, AUDIT_LIE, AUDIT_NOMINAL, AUDIT_LSE);
+      auditQuestionsChecked = Array(10).fill(false);
+      areAuditSolutionsRevealed = false;
+      const btn = document.getElementById('btn-toggle-solutions');
+      if (btn) btn.innerText = '🔍 Revelar Solución Oficial';
+      renderAuditChart();
+      renderAuditTable();
+      renderAuditQuestions();
+      renderAuditAwardButtons();
+    }
+
+    function generateNewRandomAuditScenario() {
+      const types = ['creciente', 'decreciente', 'especial'];
+      const chosenType = types[Math.floor(Math.random() * types.length)];
+      
+      const cleanModes = [19.5, 20.0, 20.5, 21.0];
+      const targetMode = cleanModes[Math.floor(Math.random() * cleanModes.length)];
+
+      let pts = [];
+      const slope = chosenType === 'creciente' ? 0.45 : (chosenType === 'decreciente' ? -0.45 : 0.05);
+      const startBase = chosenType === 'creciente' ? (AUDIT_NOMINAL - 2.5) : (chosenType === 'decreciente' ? (AUDIT_NOMINAL + 2.5) : AUDIT_NOMINAL);
+
+      // Índices donde fijar la moda para asegurar que sea estrictamente única (aparece 3 veces)
+      const modeIndices = [2, 6, 9];
+
+      for (let i = 0; i < 15; i++) {
+        if (modeIndices.includes(i)) {
+          pts.push(targetMode);
+        } else {
+          let val = startBase + (i * slope) + ((Math.random() - 0.5) * 1.8);
+          val = parseFloat(val.toFixed(1));
+          if (val === targetMode) {
+            val = parseFloat((val + 0.3).toFixed(1));
+          }
+          pts.push(val);
+        }
+      }
+
+      // Inyectar 1 o 2 días fuera de límites para que las preguntas 3 y 8 tengan respuesta pedagógica
+      if (chosenType === 'creciente') {
+        pts[12] = parseFloat((AUDIT_LSE + 0.6 + Math.random() * 0.7).toFixed(1));
+        pts[14] = parseFloat((AUDIT_LSE + 1.0 + Math.random() * 0.8).toFixed(1));
+      } else if (chosenType === 'decreciente') {
+        pts[12] = parseFloat((AUDIT_LIE - 0.6 - Math.random() * 0.6).toFixed(1));
+        pts[14] = parseFloat((AUDIT_LIE - 1.1 - Math.random() * 0.7).toFixed(1));
+      } else {
+        pts[4] = parseFloat((AUDIT_LSE + 0.8 + Math.random() * 0.7).toFixed(1));
+        pts[10] = parseFloat((AUDIT_LIE - 0.8 - Math.random() * 0.6).toFixed(1));
+      }
+
+      // Asegurar un salto marcado entre dos días para la pregunta 9
+      const jumpIdx = 7;
+      if (pts[jumpIdx] === targetMode) pts[jumpIdx] = parseFloat((pts[jumpIdx - 1] + 2.8).toFixed(1));
+      else pts[jumpIdx] = parseFloat((pts[jumpIdx - 1] + 3.4).toFixed(1));
+
+      auditScenarioKey = 'aleatorio';
+      document.getElementById('sel-audit-scenario').value = 'aleatorio';
+      auditData = pts;
+      auditAnswers = computeAuditAnswers(auditData, AUDIT_LIE, AUDIT_NOMINAL, AUDIT_LSE);
+      auditQuestionsChecked = Array(10).fill(false);
+      areAuditSolutionsRevealed = false;
+      const btn = document.getElementById('btn-toggle-solutions');
+      if (btn) btn.innerText = '🔍 Revelar Solución Oficial';
+
+      renderAuditChart();
+      renderAuditTable();
+      renderAuditQuestions();
+      renderAuditAwardButtons();
+      showToast('🎲 Nuevo escenario de 15 días generado aleatoriamente con coherencia SPC.');
+    }
+
+    // --- MOTOR MATEMÁTICO DE RESOLUCIÓN DE LAS 10 PREGUNTAS ---
+    function computeAuditAnswers(data, lie, nominal, lse) {
+      const n = data.length; // 15 días
+
+      // 1. Moda
+      const freqs = {};
+      data.forEach((val, idx) => {
+        const k = val.toFixed(1);
+        if (!freqs[k]) freqs[k] = { val: val, count: 0, days: [] };
+        freqs[k].count++;
+        freqs[k].days.push(idx + 1);
+      });
+
+      let maxCount = 0;
+      let modeCandidates = [];
+      for (const k in freqs) {
+        if (freqs[k].count > maxCount) {
+          maxCount = freqs[k].count;
+          modeCandidates = [freqs[k]];
+        } else if (freqs[k].count === maxCount) {
+          modeCandidates.push(freqs[k]);
+        }
+      }
+
+      const q1_modes = modeCandidates.map(m => `${m.val.toFixed(1)} mm (se repite ${m.count} veces en los días ${m.days.join(', ')})`).join(' y ');
+      const q1_simple = modeCandidates.map(m => `${m.val.toFixed(1)} mm`).join(', ');
+
+      // 2. Tendencia general (Regresión lineal simple)
+      const xMean = (n + 1) / 2; // 8
+      const yMean = data.reduce((a, b) => a + b, 0) / n;
+      let num = 0;
+      let den = 0;
+      data.forEach((y, idx) => {
+        const x = idx + 1;
+        num += (x - xMean) * (y - yMean);
+        den += Math.pow(x - xMean, 2);
+      });
+      const slope = num / den;
+      let trendType = 'Estable';
+      let trendRationale = '';
+
+      const firstThirdAvg = data.slice(0, 5).reduce((a, b) => a + b, 0) / 5;
+      const lastThirdAvg = data.slice(10, 15).reduce((a, b) => a + b, 0) / 5;
+
+      if (slope > 0.12) {
+        trendType = 'Creciente';
+        trendRationale = `La pendiente de la recta es positiva (+${slope.toFixed(2)} mm/día). El promedio de los primeros 5 días (${firstThirdAvg.toFixed(1)} mm) aumenta notoriamente hacia los últimos 5 días (${lastThirdAvg.toFixed(1)} mm), indicando una deriva ascendente progresiva (posible desgaste o calentamiento).`;
+      } else if (slope < -0.12) {
+        trendType = 'Decreciente';
+        trendRationale = `La pendiente de la recta es negativa (${slope.toFixed(2)} mm/día). El promedio inicial (${firstThirdAvg.toFixed(1)} mm) disminuye hacia los días finales (${lastThirdAvg.toFixed(1)} mm), mostrando una pérdida o caída continua (posible fuga, despresurización o desajuste).`;
+      } else {
+        trendType = 'Estable';
+        trendRationale = `La pendiente es prácticamente nula (${slope.toFixed(2)} mm/día). Los datos oscilan alrededor de la media nominal de ${nominal.toFixed(1)} mm sin una inclinación sostenida a lo largo de los 15 días.`;
+      }
+
+      // 3 & 8. Puntos fuera de especificación
+      const outDays = [];
+      data.forEach((val, idx) => {
+        const day = idx + 1;
+        if (val > lse) {
+          outDays.push({ day, val, type: 'LSE', diff: (val - lse).toFixed(1) });
+        } else if (val < lie) {
+          outDays.push({ day, val, type: 'LIE', diff: (lie - val).toFixed(1) });
+        }
+      });
+
+      const q3_ans = outDays.length > 0 
+        ? outDays.map(o => `Día ${o.day} (${o.val.toFixed(1)} mm, supera ${o.type} por ${o.diff} mm)`).join('; ')
+        : 'Ningún día se sale de los límites de especificación.';
+      const q8_ans = `${outDays.length} día(s) fuera de especificación` + (outDays.length > 0 ? ` (Día(s): ${outDays.map(o => o.day).join(', ')})` : '');
+
+      // 4. Media del proceso
+      const q4_meanExact = yMean.toFixed(2);
+      const q4_meanApprox = Math.round(yMean);
+
+      // 5. Rango
+      const maxVal = Math.max(...data);
+      const minVal = Math.min(...data);
+      const rangeVal = (maxVal - minVal).toFixed(1);
+
+      // 6. Máximo y día
+      const maxIdx = data.indexOf(maxVal);
+      const q6_ans = `${maxVal.toFixed(1)} mm en el Día ${maxIdx + 1}`;
+
+      // 7. Mínimo y día
+      const minIdx = data.indexOf(minVal);
+      const q7_ans = `${minVal.toFixed(1)} mm en el Día ${minIdx + 1}`;
+
+      // 9. Mayor variación respecto al día anterior
+      let maxDiff = 0;
+      let maxDiffDay = 2;
+      let diffPrev = 0;
+      let diffCurr = 0;
+
+      for (let i = 1; i < data.length; i++) {
+        const diff = Math.abs(data[i] - data[i - 1]);
+        if (diff > maxDiff) {
+          maxDiff = diff;
+          maxDiffDay = i + 1;
+          diffPrev = data[i - 1];
+          diffCurr = data[i];
+        }
+      }
+      const q9_ans = `En el Día ${maxDiffDay}, con un cambio absoluto de ${maxDiff.toFixed(1)} mm respecto al Día ${maxDiffDay - 1} (pasó de ${diffPrev.toFixed(1)} mm a ${diffCurr.toFixed(1)} mm).`;
+
+      // 10. ¿Funciona adecuadamente?
+      let q10_status = 'NO';
+      let q10_rationale = '';
+
+      if (outDays.length > 0 && trendType !== 'Estable') {
+        q10_status = 'NO';
+        q10_rationale = `NO funciona adecuadamente. El proceso tiene ${outDays.length} punto(s) fuera de especificación (productos defectuosos / no conformes) y una tendencia ${trendType} pronunciada. Esto demuestra que el proceso está fuera de control estadístico y afectado por causas asignables sistemáticas (ej. desgaste, temperatura o falta de ajuste operacional).`;
+      } else if (outDays.length > 0) {
+        q10_status = 'NO';
+        q10_rationale = `NO funciona adecuadamente. Aunque no presenta una tendencia sostenida, tiene ${outDays.length} día(s) violando los límites de ingeniería (${outDays.map(o => 'Día ' + o.day).join(', ')}), lo cual genera piezas defectuosas y evidencia causas especiales esporádicas.`;
+      } else if (trendType !== 'Estable') {
+        q10_status = 'NO';
+        q10_rationale = `NO funciona adecuadamente a largo plazo. Aunque aún no ha salido de los límites, la tendencia ${trendType} indica que el proceso está derivando y saldrá de especificación en los próximos turnos si no se realiza ajuste preventivo.`;
+      } else {
+        q10_status = 'SÍ';
+        q10_rationale = `SÍ funciona adecuadamente. El 100% de las mediciones se mantienen dentro de los límites de especificación (LIE = 16.0 y LSE = 24.0) y la variación es puramente aleatoria alrededor de la media nominal de ${nominal.toFixed(1)} mm, sin patrones ni causas asignables.`;
+      }
+
+      return {
+        q1: { simple: q1_simple, full: q1_modes },
+        q2: { simple: trendType, full: `${trendType}. Justificación: ${trendRationale}`, slope, xMean, yMean },
+        q3: { simple: outDays.length > 0 ? outDays.map(o => `Día ${o.day}`).join(', ') : 'Ninguno', full: q3_ans, outDays },
+        q4: { simple: `${q4_meanApprox} mm`, full: `Media exacta = ${q4_meanExact} mm (Aproximadamente ${q4_meanApprox} mm o ${yMean.toFixed(1)} mm)` },
+        q5: { simple: `${rangeVal} mm`, full: `R = Valor Máx (${maxVal.toFixed(1)}) - Valor Mín (${minVal.toFixed(1)}) = ${rangeVal} mm` },
+        q6: { simple: `${maxVal.toFixed(1)} mm (Día ${maxIdx + 1})`, full: q6_ans, day: maxIdx + 1, val: maxVal },
+        q7: { simple: `${minVal.toFixed(1)} mm (Día ${minIdx + 1})`, full: q7_ans, day: minIdx + 1, val: minVal },
+        q8: { simple: `${outDays.length} día(s)`, full: q8_ans, count: outDays.length },
+        q9: { simple: `Día ${maxDiffDay} (Δ = ${maxDiff.toFixed(1)} mm)`, full: q9_ans, day: maxDiffDay, diff: maxDiff },
+        q10: { simple: q10_status, full: q10_rationale, status: q10_status }
+      };
+    }
+
+    // --- RENDERIZADO DE LA GRÁFICA EN CANVAS ---
+    function renderAuditChart() {
+      const canvas = document.getElementById('canvas-game3-audit');
+      if (!canvas || !auditData || auditData.length === 0) return;
+      
+      const parent = canvas.parentElement;
+      canvas.width = parent ? parent.clientWidth : 900;
+      canvas.height = 360;
+
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      const padLeft = 60;
+      const padRight = 35;
+      const padTop = 35;
+      const padBottom = 45;
+
+      const plotW = w - padLeft - padRight;
+      const plotH = h - padTop - padBottom;
+
+      const yMin = 13.5;
+      const yMax = 28.5;
+
+      const getY = (val) => padTop + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
+      const getX = (index) => padLeft + (index / (auditData.length - 1)) * plotW;
+
+      // Líneas de cuadrícula horizontal
+      ctx.strokeStyle = document.body.classList.contains('theme-light') ? '#e2e8f0' : '#1e293b';
+      ctx.lineWidth = 1;
+      for (let v = 14; v <= 28; v += 2) {
+        const y = getY(v);
+        ctx.beginPath();
+        ctx.moveTo(padLeft, y);
+        ctx.lineTo(w - padRight, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '11px JetBrains Mono';
+        ctx.textAlign = 'right';
+        ctx.fillText(v.toFixed(0) + ' mm', padLeft - 8, y + 4);
+      }
+
+      // Línea LSE (24.0 mm)
+      const yLSE = getY(AUDIT_LSE);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yLSE);
+      ctx.lineTo(w - padRight, yLSE);
+      ctx.stroke();
+
+      // Línea Media Nominal (20.0 mm)
+      const yNom = getY(AUDIT_NOMINAL);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yNom);
+      ctx.lineTo(w - padRight, yNom);
+      ctx.stroke();
+
+      // Línea LIE (16.0 mm)
+      const yLIE = getY(AUDIT_LIE);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yLIE);
+      ctx.lineTo(w - padRight, yLIE);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Recta de tendencia ajustada (si están reveladas las respuestas)
+      if (areAuditSolutionsRevealed && auditAnswers) {
+        const x1 = getX(0);
+        const y1Val = auditAnswers.q2.yMean + auditAnswers.q2.slope * (1 - auditAnswers.q2.xMean);
+        const y1 = getY(y1Val);
+
+        const x2 = getX(14);
+        const y2Val = auditAnswers.q2.yMean + auditAnswers.q2.slope * (15 - auditAnswers.q2.xMean);
+        const y2 = getY(y2Val);
+
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([3, 4]);
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Trazar línea continua entre los 15 puntos
+      ctx.strokeStyle = '#8b5cf6';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      auditData.forEach((val, idx) => {
+        const x = getX(idx);
+        const y = getY(val);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Dibujar cada punto
+      auditData.forEach((val, idx) => {
+        const x = getX(idx);
+        const y = getY(val);
+        const day = idx + 1;
+        const isOutOfSpec = val > AUDIT_LSE || val < AUDIT_LIE;
+
+        // Círculo exterior de advertencia si está fuera de especificación
+        if (isOutOfSpec) {
+          ctx.beginPath();
+          ctx.arc(x, y, 10, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(239, 68, 68, 0.35)';
+          ctx.fill();
+          ctx.strokeStyle = '#ef4444';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+
+        // Punto principal
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = isOutOfSpec ? '#ef4444' : '#a855f7';
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Etiqueta de valor sobre el punto
+        ctx.fillStyle = isOutOfSpec ? '#f87171' : (document.body.classList.contains('theme-light') ? '#0f172a' : '#f8fafc');
+        ctx.font = isOutOfSpec ? 'bold 11px JetBrains Mono' : '10px JetBrains Mono';
+        ctx.textAlign = 'center';
+        ctx.fillText(val.toFixed(1), x, y - 10);
+
+        // Etiqueta de día en el eje X
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px Outfit';
+        ctx.textAlign = 'center';
+        ctx.fillText(`D${day}`, x, h - padBottom + 16);
+
+        // Decoraciones de soluciones reveladas
+        if (areAuditSolutionsRevealed && auditAnswers) {
+          if (day === auditAnswers.q6.day) {
+            // Máximo 👑
+            ctx.fillStyle = '#f59e0b';
+            ctx.font = '12px Outfit';
+            ctx.fillText('👑 Máx', x, y - 24);
+          }
+          if (day === auditAnswers.q7.day) {
+            // Mínimo ⬇️
+            ctx.fillStyle = '#8b5cf6';
+            ctx.font = '12px Outfit';
+            ctx.fillText('⬇️ Mín', x, y + 22);
+          }
+          if (day === auditAnswers.q9.day) {
+            // Mayor variación ⚡
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = '12px Outfit';
+            ctx.fillText('⚡ Mayor Salto', x, y - 24);
+          }
+        }
+      });
+    }
+
+    // --- RENDERIZADO DE TABLA DIARIA (15 DÍAS) ---
+    function renderAuditTable() {
+      const table = document.getElementById('audit-data-table');
+      if (!table || !auditData) return;
+
+      let html = '<thead><tr><th>Día</th>';
+      for (let i = 1; i <= 15; i++) {
+        html += `<th>Día ${i}</th>`;
+      }
+      html += '</tr></thead><tbody><tr><td style="font-weight: 800; background: var(--bg-card);">Valor (mm)</td>';
+
+      auditData.forEach(val => {
+        const out = val > AUDIT_LSE || val < AUDIT_LIE;
+        html += `<td class="${out ? 'out-of-spec' : ''}">${val.toFixed(1)}</td>`;
+      });
+      html += '</tr></tbody>';
+      table.innerHTML = html;
+    }
+
+    // --- RENDERIZADO DE LAS 10 PREGUNTAS ---
+    const AUDIT_QUESTIONS_META = [
+      { id: 1, title: '1. ¿Cuál es la moda de los datos?' },
+      { id: 2, title: '2. ¿Cuál es la tendencia general del proceso: creciente, decreciente o estable?' },
+      { id: 3, title: '3. ¿En qué día o días el proceso se sale de los límites de especificación?' },
+      { id: 4, title: '4. ¿Cuál es aproximadamente la media del proceso?' },
+      { id: 5, title: '5. ¿Cuál es el rango de los datos?' },
+      { id: 6, title: '6. ¿Cuál es el valor máximo y en qué día se presentó?' },
+      { id: 7, title: '7. ¿Cuál es el valor mínimo y en qué día se presentó?' },
+      { id: 8, title: '8. ¿Cuántos días estuvo el proceso fuera de especificación?' },
+      { id: 9, title: '9. ¿En qué día se presentó la mayor variación respecto al día anterior?' },
+      { id: 10, title: '10. ¿Consideras que el proceso está funcionando adecuadamente? Justifica tu respuesta.' }
+    ];
+
+    function renderAuditQuestions() {
+      const container = document.getElementById('audit-questions-container');
+      if (!container || !auditAnswers) return;
+
+      let html = '';
+      AUDIT_QUESTIONS_META.forEach((q, idx) => {
+        const ansKey = 'q' + (idx + 1);
+        const ansObj = auditAnswers[ansKey];
+
+        html += `
+          <div class="audit-q-card">
+            <div class="audit-q-header">
+              <span class="audit-q-num">Pregunta ${idx + 1} de 10</span>
+            </div>
+            <div class="audit-q-title">${q.title}</div>
+            
+            <div class="audit-q-solution ${areAuditSolutionsRevealed ? 'revealed' : ''}">
+              <div style="font-weight: 800; color: var(--green); margin-bottom: 4px;">
+                🎯 Respuesta Oficial: ${ansObj.simple}
+              </div>
+              <div style="color: var(--text-muted); font-size: 0.82rem; line-height: 1.4;">
+                ${ansObj.full}
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function toggleAllAuditSolutions() {
+      areAuditSolutionsRevealed = !areAuditSolutionsRevealed;
+      const btn = document.getElementById('btn-toggle-solutions');
+      if (btn) btn.innerText = areAuditSolutionsRevealed ? '🙈 Ocultar Solución Oficial' : '🔍 Revelar Solución Oficial';
+      renderAuditQuestions();
+      renderAuditChart();
+    }
+
+    // --- ASIGNACIÓN DE PUNTAJES JUEGO 3: SISTEMA COMO JUEGO 1 ---
+    function renderAuditAwardButtons() {
+      const container = document.getElementById('audit-teams-award-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      teams.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'team-eval-row';
+        row.innerHTML = `
+          <div>
+            <strong style="color: var(--text-main); font-size: 0.95rem;">${t.name}</strong>
+            <span style="font-size: 0.8rem; color: var(--purple); margin-left: 6px;">(J3: ${t.auditScore || 0} pts)</span>
+          </div>
+          <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+            <button class="btn-score-chip zero" onclick="awardAuditPointsToTeam(${t.id}, 0)" title="Respuesta incorrecta (+0 pts)">0</button>
+            <button class="btn-score-chip" onclick="awardAuditPointsToTeam(${t.id}, 10)" title="Intento básico / Parcial (+10 pts)">+10</button>
+            <button class="btn-score-chip" onclick="awardAuditPointsToTeam(${t.id}, 35)" title="Respuesta aceptable (+35 pts)">+35</button>
+            <button class="btn-score-chip" onclick="awardAuditPointsToTeam(${t.id}, 50)" title="Buen análisis (+50 pts)">+50</button>
+            <button class="btn-score-chip" onclick="awardAuditPointsToTeam(${t.id}, 100)" title="Respuesta perfecta (+100 pts)">+100</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function awardAuditPointsToTeam(teamId, pts) {
+      const team = teams.find(t => t.id === teamId);
+      if (!team) return;
+      team.auditScore = (team.auditScore || 0) + pts;
+      saveTeamsToStorage();
+      renderAuditAwardButtons();
+      renderGrandPodium();
+      showToast(`✅ ${team.name}: +${pts} pts asignados en Juego 3 (Total J3: ${team.auditScore} pts)`);
+    }
+
+    // =========================================================
+    // JUEGO 4: EL CRONÓMETRO DE PRECISIÓN (10.000 SEGUNDOS)
+    // =========================================================
+    let chronoState = 'IDLE'; // 'IDLE', 'RUNNING', 'FROZEN'
+    let chronoStartTime = 0;
+    let chronoAnimationFrameId = null;
+    let lastChronoElapsed = 0;
+    let lastChronoScore = 0;
+    let lastChronoDiff = 0;
+
+    function startChrono() {
+      if (chronoState === 'RUNNING' || chronoState === 'FROZEN') return;
+      chronoState = 'RUNNING';
+      chronoStartTime = performance.now();
+
+      const card = document.getElementById('chrono-display-box');
+      if (card) {
+        card.classList.remove('frozen');
+        card.classList.add('running');
+      }
+      const badge = document.getElementById('chrono-badge');
+      if (badge) {
+        badge.className = 'chrono-state-badge badge-running';
+        badge.innerText = '⏱️ EN MARCHA — ¡PRESIONA ESPACIO PARA CONGELAR!';
+      }
+      document.getElementById('btn-chrono-start').style.display = 'none';
+      document.getElementById('btn-chrono-stop').style.display = 'inline-flex';
+      document.getElementById('chrono-result-box').classList.remove('active');
+
+      runChronoLoop();
+    }
+
+    function runChronoLoop() {
+      if (chronoState !== 'RUNNING') return;
+      const now = performance.now();
+      const elapsed = (now - chronoStartTime) / 1000;
+
+      const digits = document.getElementById('chrono-timer-digits');
+      if (digits) {
+        digits.innerText = elapsed.toFixed(3) + ' s';
+      }
+
+      chronoAnimationFrameId = requestAnimationFrame(runChronoLoop);
+    }
+
+    function stopChrono() {
+      if (chronoState !== 'RUNNING') return;
+      const now = performance.now();
+      const elapsed = (now - chronoStartTime) / 1000;
+
+      cancelAnimationFrame(chronoAnimationFrameId);
+      chronoState = 'FROZEN';
+      lastChronoElapsed = parseFloat(elapsed.toFixed(3));
+
+      const digits = document.getElementById('chrono-timer-digits');
+      if (digits) {
+        digits.innerText = lastChronoElapsed.toFixed(3) + ' s';
+      }
+
+      const card = document.getElementById('chrono-display-box');
+      if (card) {
+        card.classList.remove('running');
+        card.classList.add('frozen');
+      }
+
+      const badge = document.getElementById('chrono-badge');
+      if (badge) {
+        badge.className = 'chrono-state-badge badge-frozen';
+        badge.innerText = '❄️ CONGELADO — RESULTADO REGISTRADO';
+      }
+
+      document.getElementById('btn-chrono-stop').style.display = 'none';
+      document.getElementById('btn-chrono-start').style.display = 'none';
+
+      const TARGET = 10.000;
+      const diff = lastChronoElapsed - TARGET;
+      lastChronoDiff = parseFloat(diff.toFixed(3));
+      const absDiff = Math.abs(diff);
+
+      // Calificación: 100 - (absDiff * 50), mínimo 0 con 3 decimales
+      lastChronoScore = parseFloat(Math.max(0, 100 - (absDiff * 50)).toFixed(3));
+
+      let verdictText = '🎯 Exactitud Seis Sigma';
+      let verdictColor = 'var(--green)';
+      let diffDesc = `${Math.round(absDiff * 1000)} ms de ` + (diff >= 0 ? 'retardo' : 'anticipación');
+
+      if (absDiff <= 0.050) {
+        verdictText = '🎯 Exactitud Seis Sigma (±50 ms)';
+        verdictColor = 'var(--green)';
+      } else if (absDiff <= 0.200) {
+        verdictText = '✅ Proceso Capaz y Centrado (±200 ms)';
+        verdictColor = 'var(--blue-light)';
+      } else if (absDiff <= 0.500) {
+        verdictText = '⚠️ Variación Aceptable (±500 ms)';
+        verdictColor = 'var(--amber)';
+      } else {
+        verdictText = '❌ Fuera de Tolerancia (>500 ms)';
+        verdictColor = 'var(--red)';
+      }
+
+      document.getElementById('chrono-stat-time').innerText = lastChronoElapsed.toFixed(3) + ' s';
+      document.getElementById('chrono-stat-diff').innerText = (diff >= 0 ? '+' : '') + lastChronoDiff.toFixed(3) + ' s';
+      document.getElementById('chrono-stat-diff-desc').innerText = diffDesc;
+      document.getElementById('chrono-stat-score').innerText = lastChronoScore.toFixed(3) + ' pts';
+
+      const verdictPill = document.getElementById('chrono-verdict-pill');
+      if (verdictPill) {
+        verdictPill.innerText = verdictText;
+        verdictPill.style.color = verdictColor;
+        verdictPill.style.borderColor = verdictColor;
+        verdictPill.style.background = verdictColor === 'var(--green)' ? 'rgba(16, 185, 129, 0.15)' : 
+                                      (verdictColor === 'var(--blue-light)' ? 'rgba(2, 132, 199, 0.15)' : 
+                                      (verdictColor === 'var(--amber)' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(239, 68, 68, 0.15)'));
+      }
+
+      const team = teams.find(t => t.id === activeChronoTeamId) || teams[0];
+      if (team) {
+        const lbl = document.getElementById('lbl-active-chrono-team');
+        if (lbl) lbl.innerText = team.name;
+      }
+
+      const resultBox = document.getElementById('chrono-result-box');
+      if (resultBox) {
+        resultBox.classList.add('active');
+      }
+    }
+
+    function resetChrono() {
+      cancelAnimationFrame(chronoAnimationFrameId);
+      chronoState = 'IDLE';
+      lastChronoElapsed = 0;
+
+      const digits = document.getElementById('chrono-timer-digits');
+      if (digits) digits.innerText = '0.000 s';
+
+      const card = document.getElementById('chrono-display-box');
+      if (card) {
+        card.classList.remove('running', 'frozen');
+      }
+
+      const badge = document.getElementById('chrono-badge');
+      if (badge) {
+        badge.className = 'chrono-state-badge badge-idle';
+        badge.innerText = '⚪ Listo para iniciar — Presiona Iniciar o Barra Espaciadora';
+      }
+
+      document.getElementById('btn-chrono-start').style.display = 'inline-flex';
+      document.getElementById('btn-chrono-stop').style.display = 'none';
+      document.getElementById('chrono-result-box').classList.remove('active');
+    }
+
+    function saveChronoScoreToActiveTeam() {
+      const team = teams.find(t => t.id === activeChronoTeamId);
+      if (team) {
+        team.chronoScore = lastChronoScore;
+        team.chronoTime = lastChronoElapsed;
+        team.chronoDiff = lastChronoDiff;
+        saveTeamsToStorage();
+        showToast(`✅ ${team.name}: Puntaje de ${lastChronoScore.toFixed(3)} pts guardado en Juego 4 (${lastChronoElapsed.toFixed(3)}s).`);
+        renderChronoLeaderboard();
+        renderGrandPodium();
+      }
+    }
+
+    function renderChronoLeaderboard() {
+      const container = document.getElementById('chrono-leaderboard-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Ordenar el podio del Juego 4 estrictamente por el tiempo registrado más cercano a 10.000s
+      const sorted = [...teams].sort((a, b) => {
+        const hasTimeA = a.chronoTime !== null && a.chronoTime !== undefined;
+        const hasTimeB = b.chronoTime !== null && b.chronoTime !== undefined;
+
+        if (!hasTimeA && !hasTimeB) return 0;
+        if (!hasTimeA) return 1; // equipos sin tiempo registrado van al final
+        if (!hasTimeB) return -1;
+
+        // Menor diferencia absoluta respecto a 10.000s va de primero
+        const diffA = Math.abs(Number(a.chronoTime) - 10.000);
+        const diffB = Math.abs(Number(b.chronoTime) - 10.000);
+        return diffA - diffB;
+      });
+
+      sorted.forEach((t, idx) => {
+        const item = document.createElement('div');
+        item.className = 'team-item-podium';
+        const hasTime = (t.chronoTime !== null && t.chronoTime !== undefined);
+        const medal = hasTime ? (idx === 0 ? '🥇 ' : (idx === 1 ? '🥈 ' : (idx === 2 ? '🥉 ' : `#${idx + 1} `))) : `#${idx + 1} `;
+
+        let timeDetails = '';
+        let timeMain = '';
+
+        if (hasTime) {
+          const diffVal = Number(t.chronoDiff);
+          const diffSign = diffVal >= 0 ? '+' : '';
+          timeDetails = `
+            <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 3px;">
+              Desvío: <strong style="color: var(--purple); font-family: var(--font-mono);">${diffSign}${diffVal.toFixed(3)}s</strong> | 
+              Puntaje: <strong style="color: var(--green);">${(t.chronoScore || 0).toFixed(3)} pts</strong>
+            </div>
+          `;
+          timeMain = `
+            <div style="text-align: right;">
+              <div class="team-score-exact" style="color: var(--amber); font-size: 1.15rem;">
+                ${Number(t.chronoTime).toFixed(3)} s
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">tiempo registrado</div>
+            </div>
+          `;
+        } else {
+          timeDetails = `
+            <div style="font-size: 0.74rem; color: var(--text-muted); margin-top: 3px;">
+              Sin intento registrado aún
+            </div>
+          `;
+          timeMain = `
+            <div style="text-align: right;">
+              <div class="team-score-exact" style="color: var(--text-muted); font-size: 1.05rem;">
+                --.--- s
+              </div>
+              <div style="font-size: 0.7rem; color: var(--text-muted);">pendiente</div>
+            </div>
+          `;
+        }
+
+        item.innerHTML = `
+          <div>
+            <strong style="font-size: 0.95rem;">${medal}${t.name}</strong>
+            ${timeDetails}
+          </div>
+          ${timeMain}
+        `;
+        container.appendChild(item);
+      });
+
+      // Selector de equipo para jugar
+      const chipContainer = document.getElementById('chrono-team-chips');
+      if (!chipContainer) return;
+      chipContainer.innerHTML = '';
+      teams.forEach(t => {
+        const chip = document.createElement('button');
+        chip.className = 'btn-case-pill' + (t.id === activeChronoTeamId ? ' active' : '');
+        const teamHasTime = (t.chronoTime !== null && t.chronoTime !== undefined);
+        chip.innerText = `${t.name} (${teamHasTime ? Number(t.chronoTime).toFixed(3) + 's' : '0 pts'})`;
+        chip.onclick = () => {
+          activeChronoTeamId = t.id;
+          const lbl = document.getElementById('lbl-active-chrono-team');
+          if (lbl) lbl.innerText = t.name;
+          renderChronoLeaderboard();
+        };
+        chipContainer.appendChild(chip);
+      });
+    }
+
+    // Event listener para detener con Barra Espaciadora y congelar
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+        return;
+      }
+      if (e.code === 'Space' || e.key === ' ') {
+        const panel = document.getElementById('panel-game4');
+        if (panel && panel.classList.contains('active')) {
+          e.preventDefault();
+          if (chronoState === 'IDLE') {
+            startChrono();
+          } else if (chronoState === 'RUNNING') {
+            stopChrono();
+          }
+          // Si está en 'FROZEN', se congela y no hace nada hasta reiniciar
+        }
+      }
+    });
+
+    // =========================================================
+    // PODIO GENERAL Y GESTIÓN CRUD (PESOS 30%, 25%, 25% Y 20%)
+    // =========================================================
+    function renderGrandPodium() {
+      const container = document.getElementById('grand-leaderboard-table');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Calcular puntaje total ponderado (4 Juegos: 30%, 25%, 25%, 20%)
+      const podiumList = teams.map(t => {
+        const j1 = Number(t.triviaPoints) || 0;
+        const j2 = Number(t.pulseScore) || 0;
+        const j3 = Number(t.auditScore) || 0;
+        const j4 = Number(t.chronoScore) || 0;
+        const j1Weight = j1 * 0.30;
+        const j2Weight = j2 * 0.25;
+        const j3Weight = j3 * 0.25;
+        const j4Weight = j4 * 0.20;
+        const total = j1Weight + j2Weight + j3Weight + j4Weight;
+
+        return {
+          ...t,
+          j1Raw: j1,
+          j2Raw: j2,
+          j3Raw: j3,
+          j4Raw: j4,
+          j1Weight: j1Weight,
+          j2Weight: j2Weight,
+          j3Weight: j3Weight,
+          j4Weight: j4Weight,
+          totalScore: total
+        };
+      }).sort((a, b) => b.totalScore - a.totalScore);
+
+      let tableHtml = `
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+          <thead>
+            <tr style="border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">
+              <th style="padding: 10px;">Lugar</th>
+              <th>Participante / Equipo</th>
+              <th>J1: Casos (30%)</th>
+              <th>J2: Pulso (25%)</th>
+              <th>J3: Auditoría (25%)</th>
+              <th>J4: Cronómetro (20%)</th>
+              <th style="text-align: right; padding: 10px;">Total Ponderado</th>
+              <th style="text-align: center; padding: 10px;">Acciones CRUD</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      if (podiumList.length === 0) {
+        tableHtml += `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              No hay participantes registrados. Haz clic en "➕ Nuevo Participante" arriba para agregar uno.
+            </td>
+          </tr>
+        `;
+      } else {
+        podiumList.forEach((item, pos) => {
+          const medal = pos === 0 ? '🥇' : (pos === 1 ? '🥈' : (pos === 2 ? '🥉' : `#${pos + 1}`));
+          tableHtml += `
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 12px 10px; font-weight: 800; font-size: 1.25rem;">${medal}</td>
+              <td style="font-weight: 700; font-size: 1.05rem;">
+                ${item.name}
+              </td>
+              <td>
+                <span style="font-weight: 700; color: var(--blue-light);">${item.j1Raw} pts</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">aporta: ${item.j1Weight.toFixed(3)}</span>
+              </td>
+              <td>
+                <span style="font-weight: 700; color: var(--amber); font-family: var(--font-mono);">${item.j2Raw.toFixed(3)} pts</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">aporta: ${item.j2Weight.toFixed(3)}</span>
+                ${item.pulseStats ? `<span style="font-size: 0.73rem; color: var(--text-muted); display: block; margin-top: 3px; line-height: 1.35;">X̄: <strong style="color: var(--blue-light);">${item.pulseStats.mean} px</strong> | σ: <strong style="color: var(--amber);">${item.pulseStats.stdDev} px</strong> | <strong style="color: var(--green);">${item.pulseStats.trend}</strong></span>` : ''}
+              </td>
+              <td>
+                <span style="font-weight: 700; color: var(--purple); font-family: var(--font-mono);">${item.j3Raw} pts</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">aporta: ${item.j3Weight.toFixed(3)}</span>
+              </td>
+              <td>
+                <span style="font-weight: 700; color: var(--green); font-family: var(--font-mono);">${item.j4Raw.toFixed(3)} pts</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">aporta: ${item.j4Weight.toFixed(3)}</span>
+                ${item.chronoTime !== null && item.chronoTime !== undefined ? `<span style="font-size: 0.73rem; color: var(--text-muted); display: block; margin-top: 3px;">${Number(item.chronoTime).toFixed(3)}s (Δ: ${(item.chronoDiff >= 0 ? '+' : '') + Number(item.chronoDiff).toFixed(3)}s)</span>` : ''}
+              </td>
+              <td style="text-align: right; padding: 12px 10px; font-family: var(--font-mono); font-weight: 900; color: var(--green); font-size: 1.25rem;">
+                ${item.totalScore.toFixed(3)} pts
+              </td>
+              <td style="text-align: center; padding: 12px 10px;">
+                <button class="btn-header" style="padding: 4px 10px; font-size: 0.75rem; margin-right: 4px;" onclick="openEditTeamModal(${item.id})">
+                  ✏️ Editar
+                </button>
+                <button class="btn-header" style="padding: 4px 10px; font-size: 0.75rem; color: var(--red); border-color: rgba(239,68,68,0.4);" onclick="deleteTeam(${item.id})">
+                  🗑️ Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      tableHtml += `</tbody></table>`;
+      container.innerHTML = tableHtml;
+    }
+
+    // --- OPERACIONES CRUD DE EQUIPOS / PERSONAS ---
+    function openAddTeamModal() {
+      document.getElementById('crud-modal-title').innerText = '➕ Nuevo Participante';
+      document.getElementById('crud-team-id').value = '';
+      document.getElementById('crud-team-name').value = '';
+      document.getElementById('crud-team-j1').value = '0';
+      document.getElementById('crud-team-j2').value = '0.000';
+      document.getElementById('crud-team-j3').value = '0';
+      document.getElementById('crud-team-j4').value = '0.000';
+      document.getElementById('modal-team-crud').classList.add('open');
+      document.getElementById('crud-team-name').focus();
+    }
+
+    function openEditTeamModal(teamId) {
+      const team = teams.find(t => t.id === teamId);
+      if (!team) return;
+
+      document.getElementById('crud-modal-title').innerText = '✏️ Modificar: ' + team.name;
+      document.getElementById('crud-team-id').value = team.id;
+      document.getElementById('crud-team-name').value = team.name;
+      document.getElementById('crud-team-j1').value = team.triviaPoints || 0;
+      document.getElementById('crud-team-j2').value = (team.pulseScore || 0).toFixed(3);
+      document.getElementById('crud-team-j3').value = team.auditScore !== undefined ? team.auditScore : 0;
+      document.getElementById('crud-team-j4').value = (team.chronoScore || 0).toFixed(3);
+      document.getElementById('modal-team-crud').classList.add('open');
+      document.getElementById('crud-team-name').focus();
+    }
+
+    function closeCrudModal() {
+      document.getElementById('modal-team-crud').classList.remove('open');
+    }
+
+    function saveCrudTeam() {
+      const idStr = document.getElementById('crud-team-id').value;
+      const name = document.getElementById('crud-team-name').value.trim();
+      const j1 = parseFloat(document.getElementById('crud-team-j1').value) || 0;
+      const j2 = Math.min(100, Math.max(0, parseFloat(document.getElementById('crud-team-j2').value) || 0));
+      const j3 = Math.min(100, Math.max(0, parseFloat(document.getElementById('crud-team-j3').value) || 0));
+      const j4 = Math.min(100, Math.max(0, parseFloat(document.getElementById('crud-team-j4').value) || 0));
+
+      if (!name) {
+        alert('⚠️ Por favor ingresa el nombre del equipo o participante.');
+        return;
+      }
+
+      if (idStr) {
+        // Actualizar existente (UPDATE)
+        const team = teams.find(t => t.id === parseInt(idStr));
+        if (team) {
+          team.name = name;
+          team.triviaPoints = j1;
+          team.pulseScore = parseFloat(j2.toFixed(3));
+          team.auditScore = j3;
+          team.chronoScore = parseFloat(j4.toFixed(3));
+          showToast(`✅ Participante "${team.name}" modificado exitosamente.`);
+        }
+      } else {
+        // Crear nuevo (CREATE)
+        const newId = teams.length > 0 ? Math.max(...teams.map(t => t.id)) + 1 : 1;
+        teams.push({
+          id: newId,
+          name: name,
+          triviaPoints: j1,
+          pulseScore: parseFloat(j2.toFixed(3)),
+          auditScore: j3,
+          chronoScore: parseFloat(j4.toFixed(3)),
+          chronoTime: null,
+          chronoDiff: null
+        });
+        showToast(`✅ Nuevo participante "${name}" registrado exitosamente.`);
+      }
+
+      saveTeamsToStorage();
+      closeCrudModal();
+      renderAwardButtons();
+      renderTrackerLeaderboard();
+      renderAuditAwardButtons();
+      renderChronoLeaderboard();
+      renderGrandPodium();
+    }
+
+    function deleteTeam(teamId) {
+      const team = teams.find(t => t.id === teamId);
+      if (!team) return;
+
+      if (confirm(`¿Estás seguro de eliminar a "${team.name}" del torneo?`)) {
+        teams = teams.filter(t => t.id !== teamId);
+        if (activeTeamId === teamId && teams.length > 0) {
+          activeTeamId = teams[0].id;
+        }
+        if (activeChronoTeamId === teamId && teams.length > 0) {
+          activeChronoTeamId = teams[0].id;
+        }
+        saveTeamsToStorage();
+        renderAwardButtons();
+        renderTrackerLeaderboard();
+        renderAuditAwardButtons();
+        renderChronoLeaderboard();
+        renderGrandPodium();
+        showToast(`🗑️ Participante "${team.name}" eliminado.`);
+      }
+    }
+
+    function resetDefaultTeams() {
+      if (confirm('¿Restablecer la tabla de clasificación? Se colocarán los puntajes en 0 y se dejarán únicamente los 3 equipos por defecto.')) {
+        teams = JSON.parse(JSON.stringify(DEFAULT_TEAMS));
+        activeTeamId = teams[0].id;
+        activeChronoTeamId = teams[0].id;
+        saveTeamsToStorage();
+        renderAwardButtons();
+        renderTrackerLeaderboard();
+        renderAuditAwardButtons();
+        renderChronoLeaderboard();
+        renderGrandPodium();
+        showToast('🔄 Clasificación restablecida: 3 equipos por defecto con puntajes en 0 guardados en JSON.');
+      }
+    }
+
+    // --- IMPORTACIÓN Y EXPORTACIÓN JSON ---
+    function exportTeamsJSON() {
+      const exportObject = {
+        title: 'Torneo de Control Estadístico de Procesos (SPC) - 4 Juegos',
+        exportDate: new Date().toISOString(),
+        weights: {
+          game1_cases: '30%',
+          game2_pulse: '25%',
+          game3_audit: '25%',
+          game4_chrono: '20%'
+        },
+        teams: teams
+      };
+
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObject, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `torneo_spc_datos_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('💾 Archivo JSON exportado y descargado exitosamente.');
+    }
+
+    function importTeamsJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.teams) && parsed.teams.length > 0) {
+            teams = parsed.teams.map(t => ({
+              ...t,
+              triviaPoints: Number(t.triviaPoints) || 0,
+              pulseScore: Number(t.pulseScore) || 0,
+              pulseStats: t.pulseStats || null,
+              auditScore: Number(t.auditScore) || 0,
+              chronoScore: Number(t.chronoScore) || 0,
+              chronoTime: t.chronoTime !== undefined ? t.chronoTime : null,
+              chronoDiff: t.chronoDiff !== undefined ? t.chronoDiff : null
+            }));
+            activeTeamId = teams[0].id;
+            activeChronoTeamId = teams[0].id;
+            saveTeamsToStorage();
+            renderAwardButtons();
+            renderTrackerLeaderboard();
+            renderAuditAwardButtons();
+            renderChronoLeaderboard();
+            renderGrandPodium();
+            showToast(`📂 ¡${teams.length} participantes importados exitosamente desde JSON!`);
+          } else {
+            alert('⚠️ El archivo JSON no contiene un arreglo válido de equipos.');
+          }
+        } catch (err) {
+          alert('❌ Error al procesar el archivo JSON: ' + err.message);
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    // Inicialización al cargar la ventana
+    window.addEventListener('load', () => {
+      loadTeamsFromStorage();
+      renderAllCaseCharts();
+      renderAwardButtons();
+      initTrackerCanvas();
+      renderTrackerLeaderboard();
+      initAuditGame();
+      renderAuditAwardButtons();
+      renderChronoLeaderboard();
+      renderGrandPodium();
+    });
+
+    window.addEventListener('resize', () => {
+      initTrackerCanvas();
+      renderAuditChart();
+    });
+  </script>
+</body>
+</html>

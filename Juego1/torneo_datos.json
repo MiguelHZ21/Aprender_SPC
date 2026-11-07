@@ -1,0 +1,46 @@
+{
+  "title": "Torneo de Control Estadístico de Procesos (SPC) - 4 Juegos",
+  "version": "4.0",
+  "lastUpdated": "2026-10-22T12:05:00.000Z",
+  "weights": {
+    "game1_cases": "30%",
+    "game2_pulse": "25%",
+    "game3_audit": "25%",
+    "game4_chrono": "20%"
+  },
+  "teams": [
+    {
+      "id": 1,
+      "name": "Línea Alfa",
+      "triviaPoints": 0,
+      "pulseScore": 0,
+      "pulseStats": null,
+      "auditScore": 0,
+      "chronoScore": 0,
+      "chronoTime": null,
+      "chronoDiff": null
+    },
+    {
+      "id": 2,
+      "name": "Planta Delta",
+      "triviaPoints": 0,
+      "pulseScore": 0,
+      "pulseStats": null,
+      "auditScore": 0,
+      "chronoScore": 0,
+      "chronoTime": null,
+      "chronoDiff": null
+    },
+    {
+      "id": 3,
+      "name": "Taller Mecatrónica",
+      "triviaPoints": 0,
+      "pulseScore": 0,
+      "pulseStats": null,
+      "auditScore": 0,
+      "chronoScore": 0,
+      "chronoTime": null,
+      "chronoDiff": null
+    }
+  ]
+}

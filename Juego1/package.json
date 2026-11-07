@@ -1,0 +1,17 @@
+{
+  "name": "juego1-spc-mastery",
+  "version": "1.0.0",
+  "description": "Juego interactivo de interpretación gráfica de Control Estadístico de Procesos (SPC) con persistencia en Neon PostgreSQL",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.23.1"
+  }
+}
+

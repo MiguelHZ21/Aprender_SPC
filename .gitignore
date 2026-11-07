@@ -1,0 +1,16 @@
+# Dependencias de Node.js
+node_modules/
+**/node_modules/
+Juego/
+
+# Variables de entorno y credenciales privadas
+.env
+**/.env
+.env.*
+!**/.env.example
+
+# Archivos temporales y logs
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db

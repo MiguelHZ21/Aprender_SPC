@@ -1,0 +1,3871 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Misión SPC: El Desafío de las Gráficas de Calidad (7 Niveles)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Canvas Confetti para celebraciones -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #0b1120;
+      --bg-card: #151e32;
+      --bg-card-hover: #1c2842;
+      --border: #23324d;
+      --border-focus: #38bdf8;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --purple: #8b5cf6;
+
+      --font-main: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius: 14px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ========================================================
+       TEMA CLARO (LIGHT THEME)
+       ======================================================== */
+    body.theme-light {
+      --bg-page: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --border: #cbd5e1;
+      --border-focus: #0284c7;
+
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+
+      --primary: #0284c7;
+      --primary-light: #0369a1;
+      --success: #059669;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --warning: #d97706;
+      --danger: #dc2626;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --purple: #7c3aed;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+
+      background-image: radial-gradient(circle at 50% 0%, #e2e8f0 0%, #f1f5f9 70%);
+    }
+
+    body.theme-light header {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom-color: #cbd5e1;
+    }
+
+    body.theme-light .brand-text h1 {
+      color: #0f172a;
+    }
+
+    body.theme-light .brand-text p {
+      color: #0284c7;
+    }
+
+    body.theme-light .hero-title {
+      background: linear-gradient(135deg, #0f172a 30%, #334155 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    body.theme-light .hero-desc {
+      color: #475569;
+    }
+
+    body.theme-light .hero-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+      border-color: #7dd3fc;
+    }
+
+    body.theme-light .login-form-card {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06);
+    }
+
+    body.theme-light .form-group label {
+      color: #0f172a;
+    }
+
+    body.theme-light .form-control {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    body.theme-light .form-control:focus {
+      background: #ffffff;
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    body.theme-light .level-nav-bar {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    body.theme-light .step-node {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #64748b;
+    }
+
+    body.theme-light .step-node.active {
+      background: #0284c7;
+      border-color: #0369a1;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+    }
+
+    body.theme-light .step-node.completed {
+      background: #dcfce7;
+      border-color: #10b981;
+      color: #047857;
+    }
+
+    body.theme-light .step-connector {
+      background: #cbd5e1;
+    }
+
+    body.theme-light .step-connector.completed {
+      background: #10b981;
+    }
+
+    body.theme-light .score-badge {
+      background: #fef3c7;
+      border-color: #fde68a;
+      color: #b45309;
+    }
+
+    body.theme-light .concept-card {
+      border-left-color: #0284c7;
+    }
+
+    body.theme-light .concept-title {
+      color: #0f172a;
+    }
+
+    body.theme-light .concept-level-badge {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    body.theme-light .lesson-section {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    body.theme-light .lesson-section-header h3 {
+      color: #0f172a;
+    }
+
+    body.theme-light .lesson-section-header .section-tag {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    body.theme-light .lesson-text {
+      color: #334155;
+    }
+
+    body.theme-light .lesson-text strong {
+      color: #0284c7;
+    }
+
+    body.theme-light .analogy-highlight-box {
+      background: #f0f9ff;
+      border-color: #bae6fd;
+    }
+
+    body.theme-light .analogy-body h4 {
+      color: #0369a1;
+    }
+
+    body.theme-light .analogy-body p {
+      color: #334155;
+    }
+
+    body.theme-light .concept-visual-illustration {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: none;
+    }
+
+    body.theme-light .golden-rules {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    body.theme-light .golden-rules h4 {
+      color: #b45309;
+    }
+
+    body.theme-light .golden-rules p {
+      color: #451a03;
+    }
+
+    body.theme-light .chart-container {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    body.theme-light .chart-title-box {
+      color: #0f172a;
+    }
+
+    body.theme-light .exercise-meta-bar {
+      border-bottom-color: #e2e8f0;
+    }
+
+    body.theme-light .exercise-num-pill {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    body.theme-light .question-box {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    body.theme-light .question-prompt {
+      color: #0f172a;
+    }
+
+    body.theme-light .option-card {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    body.theme-light .option-card:hover:not(.disabled) {
+      background: #f0f9ff;
+      border-color: #0284c7;
+    }
+
+    body.theme-light .option-card.selected {
+      background: #e0f2fe;
+      border-color: #0284c7;
+    }
+
+    body.theme-light .option-badge {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #0284c7;
+    }
+
+    body.theme-light .option-text {
+      color: #1e293b;
+    }
+
+    body.theme-light .feedback-box.correct {
+      background: #ecfdf5;
+      border-color: #10b981;
+    }
+
+    body.theme-light .feedback-box.correct h4 {
+      color: #047857;
+    }
+
+    body.theme-light .feedback-box.incorrect {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+
+    body.theme-light .feedback-box.incorrect h4 {
+      color: #b91c1c;
+    }
+
+    body.theme-light .feedback-text p {
+      color: #1e293b;
+    }
+
+    body.theme-light .result-title {
+      color: #0f172a;
+    }
+
+    body.theme-light .result-subtitle {
+      color: #475569;
+    }
+
+    body.theme-light .result-stat-pill {
+      background: #ffffff;
+      border-color: #cbd5e1;
+    }
+
+    body.theme-light .result-stat-pill .num {
+      color: #0284c7;
+    }
+
+    body.theme-light .certificate-card {
+      background: #ffffff;
+      border-color: #d97706;
+      outline: 1px solid rgba(217, 119, 6, 0.3);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08), 0 0 30px rgba(245, 158, 11, 0.15);
+    }
+
+    body.theme-light .cert-border-ornament {
+      border-color: rgba(217, 119, 6, 0.35);
+    }
+
+    body.theme-light .cert-institution {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(217, 119, 6, 0.3);
+      color: #b45309;
+    }
+
+    body.theme-light .cert-main-title {
+      color: #92400e;
+      text-shadow: none;
+    }
+
+    body.theme-light .cert-main-subtitle {
+      color: #64748b;
+    }
+
+    body.theme-light .cert-award-text {
+      color: #334155;
+    }
+
+    body.theme-light .cert-name {
+      color: #0f172a;
+    }
+
+    body.theme-light .cert-id {
+      color: #0284c7;
+    }
+
+    body.theme-light .cert-body-text {
+      color: #475569;
+    }
+
+    body.theme-light .cert-skill-card {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    body.theme-light .cert-skill-card:hover {
+      background: #ffffff;
+      border-color: #d97706;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    body.theme-light .cert-skill-card .skill-info strong {
+      color: #0f172a;
+    }
+
+    body.theme-light .cert-skill-card .skill-info span {
+      color: #64748b;
+    }
+
+    body.theme-light .skill-symbol {
+      background: #e0f2fe;
+      border-color: #bae6fd;
+      color: #0284c7;
+    }
+
+    body.theme-light .cert-meta-item {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    body.theme-light .cert-meta-item .meta-val {
+      color: #0f172a;
+    }
+
+    body.theme-light .cert-meta-item.highlight {
+      background: #fef3c7;
+      border-color: #f59e0b;
+    }
+
+    body.theme-light .cert-meta-item.highlight .meta-val {
+      color: #b45309;
+    }
+
+    body.theme-light .cert-meta-item .meta-lbl {
+      color: #64748b;
+    }
+
+    body.theme-light .sig-name {
+      color: #0f172a;
+      border-top-color: #d97706;
+    }
+
+    body.theme-light .sig-title {
+      color: #64748b;
+    }
+
+    body.theme-light .cert-signatures-row {
+      border-top-color: #e2e8f0;
+    }
+
+    body.theme-light .cert-stamp-circle {
+      border-color: #b45309;
+      color: #b45309;
+      background: rgba(245, 158, 11, 0.06);
+    }
+
+    body.theme-light .modal-card {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    body.theme-light .modal-header {
+      border-bottom-color: #e2e8f0;
+    }
+
+    body.theme-light .modal-header h3 {
+      color: #b45309;
+    }
+
+    body.theme-light .table-ranking th {
+      border-bottom-color: #cbd5e1;
+      color: #64748b;
+    }
+
+    body.theme-light .table-ranking td {
+      border-bottom-color: #f1f5f9;
+      color: #1e293b;
+    }
+
+    body.theme-light .player-pill {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    body.theme-light .player-pill .name {
+      color: #0f172a;
+    }
+
+    body.theme-light .player-pill .id-tag {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    body.theme-light .db-status-pill {
+      background: rgba(16, 185, 129, 0.12);
+      color: #047857;
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    /* Clases de apoyo para SVGs */
+    .svg-lesson-bg {
+      fill: #0b1329;
+    }
+
+    body.theme-light .svg-lesson-bg {
+      fill: #f8fafc;
+      stroke: #cbd5e1;
+      stroke-width: 1;
+    }
+
+    .svg-box-item {
+      fill: #1e293b;
+    }
+
+    body.theme-light .svg-box-item {
+      fill: #ffffff;
+      stroke: #cbd5e1;
+    }
+
+    .svg-sub-text {
+      fill: #94a3b8;
+    }
+
+    body.theme-light .svg-sub-text {
+      fill: #64748b;
+    }
+
+    .svg-warn-text {
+      fill: #fef08a;
+    }
+
+    body.theme-light .svg-warn-text {
+      fill: #b45309;
+      font-weight: bold;
+    }
+
+    .btn-theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 6px 13px;
+      border-radius: 20px;
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-theme-toggle:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #0b1120 70%);
+    }
+
+    /* BARRA SUPERIOR */
+    header {
+      background: rgba(21, 30, 50, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.85rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.4));
+    }
+
+    .brand-text h1 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .brand-text p {
+      font-size: 0.75rem;
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .db-status-pill {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .db-status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .player-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .player-pill .name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .player-pill .id-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--primary-light);
+      background: rgba(56, 189, 248, 0.15);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .btn-ranking {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #fff;
+      border: none;
+      font-family: var(--font-main);
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-ranking:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      flex: 1;
+      max-width: 980px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* TARJETA GENÉRICA */
+    .view-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 1. LOGIN */
+    .hero-box {
+      text-align: center;
+      max-width: 660px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary-light);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 2rem;
+    }
+
+    .login-form-card {
+      background: rgba(11, 17, 32, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      text-align: left;
+      margin: 0 auto;
+      max-width: 460px;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-group label span {
+      color: var(--primary-light);
+      font-weight: normal;
+      font-size: 0.78rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.85rem 1.25rem;
+      font-family: var(--font-main);
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #075985);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* STEPPER DE NIVELES (1 A 7) */
+    .level-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.85rem 1.25rem;
+      gap: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .level-stepper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .step-node {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 800;
+      background: var(--bg-page);
+      border: 2px solid var(--border);
+      color: var(--text-muted);
+      transition: all 0.3s;
+      cursor: default;
+    }
+
+    .step-node.completed {
+      background: #064e3b;
+      border-color: #10b981;
+      color: #34d399;
+    }
+
+    .step-node.active {
+      background: var(--primary);
+      border-color: var(--primary-light);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+      transform: scale(1.1);
+    }
+
+    .step-connector {
+      width: 14px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .step-connector.completed {
+      background: #10b981;
+    }
+
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #fbbf24;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    /* MÓDULO DE EXPLICACIÓN DETALLADA (LECCIÓN PREVIA) */
+    .concept-card {
+      border-left: 6px solid var(--primary-light);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .concept-header-box {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .concept-level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--primary-light);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 0.5rem;
+    }
+
+    .concept-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+
+    /* Secciones de la Explicación */
+    .lesson-section {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .lesson-section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.75rem;
+    }
+
+    .lesson-section-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    .lesson-section-header .section-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary-light);
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .lesson-text {
+      font-size: 0.96rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+    }
+
+    .lesson-text strong {
+      color: #38bdf8;
+    }
+
+    .analogy-highlight-box {
+      background: rgba(2, 132, 199, 0.09);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .analogy-icon-big {
+      font-size: 2.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+      flex-shrink: 0;
+    }
+
+    .analogy-body h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      margin-bottom: 0.35rem;
+    }
+
+    .analogy-body p {
+      font-size: 0.94rem;
+      color: #e2e8f0;
+      line-height: 1.55;
+    }
+
+    .concept-visual-illustration {
+      background: #070c17;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .golden-rules {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1.5px dashed rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+    }
+
+    .golden-rules h4 {
+      font-size: 0.92rem;
+      font-weight: 900;
+      color: #fbbf24;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .golden-rules p {
+      font-size: 0.92rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    /* ÁREA DEL EJERCICIO CON GRÁFICA */
+    .exercise-card {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .exercise-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .exercise-num-pill {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exercise-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .ex-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: all 0.2s;
+    }
+
+    .ex-dot.active {
+      background: var(--primary-light);
+      box-shadow: 0 0 6px var(--primary-light);
+    }
+
+    .ex-dot.success {
+      background: var(--success);
+    }
+
+    .ex-dot.fail {
+      background: var(--danger);
+    }
+
+    /* CONTENEDOR DEL GRÁFICO SVG INTERACTIVO */
+    .chart-container {
+      background: #070c17;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      position: relative;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chart-title-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 8px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+
+    body.theme-light .legend-item {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #1e293b;
+    }
+
+    .legend-line {
+      width: 16px;
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .legend-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .legend-line.nominal {
+      background-color: #10b981;
+    }
+
+    .legend-line.ctrl {
+      background-color: #ef4444;
+      border: 1px dashed #ef4444;
+    }
+
+    .legend-line.spec {
+      background-color: #ef4444;
+    }
+
+    .svg-chart {
+      width: 100%;
+      height: 270px;
+      overflow: visible;
+    }
+
+    /* PREGUNTA Y OPCIONES DE SELECCIÓN MÚLTIPLE */
+    .question-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem 1.25rem;
+    }
+
+    .question-prompt {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.45;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .option-card {
+      background: var(--bg-card-hover);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1.15rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .option-card:hover:not(.disabled) {
+      border-color: var(--primary-light);
+      background: #233355;
+      transform: translateX(4px);
+    }
+
+    .option-card.correct {
+      border-color: var(--success) !important;
+      background: rgba(16, 185, 129, 0.18) !important;
+    }
+
+    .option-card.incorrect {
+      border-color: var(--danger) !important;
+      background: rgba(239, 68, 68, 0.18) !important;
+    }
+
+    .option-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--bg-page);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      flex-shrink: 0;
+    }
+
+    .option-card.correct .option-badge {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+
+    .option-card.incorrect .option-badge {
+      background: var(--danger);
+      color: #fff;
+      border-color: var(--danger);
+    }
+
+    .option-text {
+      font-size: 0.94rem;
+      color: #f1f5f9;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    /* CUADRO DE FEEDBACK / EXPLICACIÓN DIDÁCTICA */
+    .feedback-box {
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.correct {
+      background: var(--success-bg);
+      border: 1px solid var(--success);
+    }
+
+    .feedback-box.incorrect {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger);
+    }
+
+    .feedback-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .feedback-text h4 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .feedback-box.correct h4 {
+      color: #34d399;
+    }
+
+    .feedback-box.incorrect h4 {
+      color: #f87171;
+    }
+
+    .feedback-text p {
+      font-size: 0.88rem;
+      color: #e2e8f0;
+      line-height: 1.45;
+    }
+
+    /* PANTALLA DE RESULTADO DE NIVEL */
+    .level-result-card {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .result-badge {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      display: inline-block;
+      animation: bounce 0.6s ease;
+    }
+
+    .result-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .result-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 540px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.55;
+    }
+
+    .stats-pill-row {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 2rem;
+    }
+
+    .result-stat-pill {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem 1.25rem;
+      text-align: center;
+    }
+
+    .result-stat-pill .num {
+      font-size: 1.4rem;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--primary-light);
+    }
+
+    .result-stat-pill .label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* BOTÓN HEADER CERTIFICADO */
+    .btn-cert {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 15px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #92400e;
+      background: linear-gradient(135deg, #fef08a, #fde047);
+      border: 1px solid #f59e0b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-cert:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+    }
+
+    /* CERTIFICADO FINAL EN COMPETENCIA TÉCNICA EN SPC */
+    .certificate-card {
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+      border: 3px solid #d97706;
+      outline: 1px solid rgba(245, 158, 11, 0.4);
+      outline-offset: 6px;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), 0 0 35px rgba(245, 158, 11, 0.2);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .cert-border-ornament {
+      border: 1.5px dashed rgba(245, 158, 11, 0.35);
+      border-radius: 14px;
+      padding: 2.2rem 2rem;
+      position: relative;
+    }
+
+    .cert-institution {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      margin-bottom: 1.2rem;
+    }
+
+    .cert-badge-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0.8rem;
+    }
+
+    .cert-gold-seal {
+      width: 85px;
+      height: 85px;
+      filter: drop-shadow(0 6px 12px rgba(245, 158, 11, 0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .cert-gold-seal:hover {
+      transform: scale(1.05) rotate(5deg);
+    }
+
+    .cert-seal-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .cert-main-title {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: #fef08a;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      text-shadow: 0 2px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .cert-main-subtitle {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      font-weight: 500;
+      margin-bottom: 1.4rem;
+    }
+
+    .cert-divider-line {
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+      width: 80%;
+      margin: 0 auto 1.5rem;
+    }
+
+    .cert-award-text {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 650px;
+      margin: 0 auto 1.2rem;
+    }
+
+    .cert-name-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .cert-name {
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: #ffffff;
+      display: inline-block;
+      padding-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .cert-underline {
+      height: 3px;
+      width: 140px;
+      background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+      margin: 4px auto 8px;
+    }
+
+    .cert-id {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: 1px;
+    }
+
+    .cert-body-text {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto 1.6rem;
+    }
+
+    /* CUADRÍCULA DE LAS 7 VARIABLES Y COMPETENCIAS TÉCNICAS */
+    .cert-skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 740px;
+      margin: 0 auto 1.8rem;
+      text-align: left;
+    }
+
+    @media (max-width: 700px) {
+      .cert-skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cert-skills-grid .cert-skill-card[style*="grid-column"] {
+        grid-column: span 1 !important;
+      }
+    }
+
+    .cert-skill-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .cert-skill-card:hover {
+      border-color: #f59e0b;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .skill-symbol {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 38px;
+      height: 34px;
+      border-radius: 6px;
+      background: rgba(2, 132, 199, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .skill-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .skill-info strong {
+      font-size: 0.82rem;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .skill-info span {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .skill-check {
+      color: #10b981;
+      font-size: 0.85rem;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    /* PANEL DE MÉTRICAS OFICIALES */
+    .cert-meta-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      max-width: 740px;
+      margin: 0 auto 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .cert-meta-box {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cert-meta-item {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .cert-meta-item.highlight {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: #f59e0b;
+    }
+
+    .cert-meta-item .meta-val {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #ffffff;
+      font-family: var(--font-mono);
+      margin-bottom: 4px;
+    }
+
+    .cert-meta-item.highlight .meta-val {
+      color: #fde047;
+    }
+
+    .cert-meta-item .meta-lbl {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+      font-weight: 700;
+    }
+
+    /* FIRMAS OFICIALES */
+    .cert-signatures-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+      max-width: 680px;
+      margin: 0 auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @media (max-width: 580px) {
+      .cert-signatures-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+    }
+
+    .cert-sig-box {
+      text-align: center;
+    }
+
+    .cert-sig-line {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .cert-sig-svg {
+      max-width: 140px;
+      height: 38px;
+    }
+
+    .sig-name {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #f1f5f9;
+      border-top: 1px solid rgba(245, 158, 11, 0.4);
+      padding-top: 6px;
+      margin-bottom: 2px;
+    }
+
+    .sig-title {
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    .cert-sig-stamp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cert-stamp-circle {
+      width: 76px;
+      height: 76px;
+      border: 2px dashed #f59e0b;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: 900;
+      color: #f59e0b;
+      line-height: 1.25;
+      letter-spacing: 0.5px;
+      transform: rotate(-10deg);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    .cert-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    /* ESTILOS DE IMPRESIÓN OFICIAL (WINDOW.PRINT) */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      header,
+      #gameNav,
+      .modal-overlay,
+      .cert-actions,
+      .no-print,
+      #headerPlayerPill,
+      .btn-theme-toggle {
+        display: none !important;
+      }
+
+      .view-card {
+        display: none !important;
+      }
+
+      #viewCertificate {
+        display: block !important;
+        border: 3px solid #b45309 !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        padding: 10mm !important;
+        margin: 0 auto !important;
+        page-break-inside: avoid !important;
+        width: 100% !important;
+        max-width: 900px !important;
+      }
+
+      .cert-border-ornament {
+        border-color: #d97706 !important;
+      }
+
+      .cert-main-title {
+        color: #92400e !important;
+        text-shadow: none !important;
+      }
+
+      .cert-main-subtitle,
+      .cert-award-text,
+      .cert-body-text {
+        color: #334155 !important;
+      }
+
+      .cert-name {
+        color: #0f172a !important;
+        border-bottom-color: #d97706 !important;
+      }
+
+      .cert-id {
+        color: #0369a1 !important;
+      }
+
+      .cert-skill-card {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+
+      .cert-skill-card .skill-info strong {
+        color: #0f172a !important;
+      }
+
+      .cert-skill-card .skill-info span {
+        color: #475569 !important;
+      }
+
+      .skill-symbol {
+        background: #e0f2fe !important;
+        border-color: #0284c7 !important;
+        color: #0284c7 !important;
+      }
+
+      .cert-meta-item {
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+      }
+
+      .cert-meta-item .meta-val {
+        color: #0f172a !important;
+      }
+
+      .cert-meta-item.highlight {
+        background: #fef3c7 !important;
+        border-color: #d97706 !important;
+      }
+
+      .cert-meta-item.highlight .meta-val {
+        color: #b45309 !important;
+      }
+
+      .cert-meta-item .meta-lbl {
+        color: #475569 !important;
+      }
+
+      .sig-name {
+        color: #0f172a !important;
+        border-top-color: #d97706 !important;
+      }
+
+      .sig-title {
+        color: #475569 !important;
+      }
+    }
+
+    /* MODAL DE RANKING */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fef08a;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 1rem 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .table-ranking {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .table-ranking th {
+      text-align: left;
+      padding: 8px 10px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table-ranking td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .rank-badge {
+      font-weight: 800;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .rank-1 {
+      background: #fbbf24;
+      color: #000;
+    }
+
+    .rank-2 {
+      background: #94a3b8;
+      color: #000;
+    }
+
+    .rank-3 {
+      background: #b45309;
+      color: #fff;
+    }
+
+    /* ANIMACIONES */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 640px) {
+      .level-stepper .step-connector {
+        display: none;
+      }
+
+      .header-actions .player-pill {
+        display: none;
+      }
+
+      .hero-title {
+        font-size: 1.7rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="theme-light">
+  <script>
+    (function () {
+      try {
+        const savedTheme = localStorage.getItem('spc_theme');
+        if (savedTheme === 'dark') {
+          document.body.classList.remove('theme-light');
+        }
+      } catch (e) { }
+    })();
+  </script>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand" onclick="goHome()">
+      <div class="brand-icon">📈</div>
+      <div class="brand-text">
+        <h1>MISIÓN SPC</h1>
+        <p>Interpretación Gráfica de Calidad · 7 Niveles</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- Botón de Alternar Tema (Claro / Oscuro) -->
+      <button class="btn-theme-toggle" id="btnThemeToggle" onclick="toggleTheme()" title="Alternar Modo Claro / Oscuro">
+        <span id="themeToggleIcon">☀️</span>
+        <span id="themeToggleText">Tema Claro</span>
+      </button>
+
+      <!-- Indicador Neon DB -->
+      <div class="db-status-pill" id="dbStatusPill" title="Conexión en tiempo real con Neon PostgreSQL">
+        <span class="db-status-dot" id="dbStatusDot"></span>
+        <span id="dbStatusText">Neon DB</span>
+      </div>
+
+      <!-- Badge de Jugador -->
+      <div class="player-pill hidden" id="headerPlayerPill">
+        <span class="name" id="headerPlayerName">Operador</span>
+        <span class="id-tag" id="headerPlayerId">#0000</span>
+      </div>
+
+      <!-- Botón de Ranking -->
+      <button class="btn-ranking" onclick="openRankingModal()">
+        <span>🏆</span> Ranking
+      </button>
+
+      <!-- Botón de Certificado Oficial (Visible al completar) -->
+      <button class="btn-cert hidden" id="headerBtnCert" onclick="showCertificate()"
+        title="Ver Certificado en Competencia Técnica en SPC">
+        <span>🏅</span> Certificado
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <main>
+
+    <!-- 1. VISTA: INICIO / LOGIN DE JUGADOR -->
+    <section id="viewLogin" class="view-card">
+      <div class="hero-box">
+        <div class="hero-badge">Aprende Control Estadístico Jugando</div>
+        <h2 class="hero-title">Domina las Gráficas de Calidad de Planta</h2>
+        <p class="hero-desc">
+          Aprende a interpretar las señales de tu proceso en lenguaje natural, claro y cotidiano.
+          Supera los <strong>7 niveles formativos</strong> (incluyendo Capacidad <strong>Cp</strong> y Centrado
+          <strong>Cpk</strong>),
+          demuestra tu ojo clínico y obtén tu Certificación de Calidad.
+        </p>
+
+        <div class="login-form-card">
+          <form id="loginForm" onsubmit="handlePlayerLogin(event)">
+            <div class="form-group">
+              <label for="inputPlayerId">Tu Identificación (ID / Cédula) <span>*Obligatorio</span></label>
+              <input type="text" id="inputPlayerId" class="form-control" placeholder="Ej. 10203040 o OP-15" required
+                autocomplete="off">
+            </div>
+
+            <div class="form-group">
+              <label for="inputPlayerName">Tu Nombre Completo <span>*Para tu certificado</span></label>
+              <input type="text" id="inputPlayerName" class="form-control" placeholder="Ej. Carlos Pérez Gómez" required
+                autocomplete="name">
+            </div>
+
+            <button type="submit" class="btn-primary" id="btnLogin">
+              <span>Comenzar el Desafío</span>
+              <span>🎮</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARRA DE PROGRESO DE NIVELES (1 A 7) -->
+    <div id="gameNav" class="level-nav-bar hidden">
+      <div class="level-stepper">
+        <div class="step-node active" id="stepNode1" title="Nivel 1: La Media">1</div>
+        <div class="step-connector" id="stepConn1"></div>
+        <div class="step-node" id="stepNode2" title="Nivel 2: Rango y Desviación">2</div>
+        <div class="step-connector" id="stepConn2"></div>
+        <div class="step-node" id="stepNode3" title="Nivel 3: Límites de Especificación (LEI y LES)">3</div>
+        <div class="step-connector" id="stepConn3"></div>
+        <div class="step-node" id="stepNode4" title="Nivel 4: Tendencias y Patrones">4</div>
+        <div class="step-connector" id="stepConn4"></div>
+        <div class="step-node" id="stepNode5" title="Nivel 5: Diagnóstico Maestro">5</div>
+        <div class="step-connector" id="stepConn5"></div>
+        <div class="step-node" id="stepNode6" title="Nivel 6: Capacidad Cp">6</div>
+        <div class="step-connector" id="stepConn6"></div>
+        <div class="step-node" id="stepNode7" title="Nivel 7: Centrado Cpk">7</div>
+      </div>
+
+      <div class="score-badge">
+        <span>⭐</span>
+        <span id="scoreDisplay">0 pts</span>
+      </div>
+    </div>
+
+    <!-- 2. VISTA: EXPLICACIÓN COMPLETA DEL TEMA (PRIMERO SE EXPLICA, LUEGO SE EVALÚA) -->
+    <section id="viewConcept" class="view-card concept-card hidden">
+      <div class="concept-header-box">
+        <div class="concept-level-badge">
+          <span>📖</span>
+          <span id="conceptLevelTag">MÓDULO DE APRENDIZAJE · NIVEL 1 DE 7</span>
+        </div>
+        <h2 class="concept-title" id="conceptTitle">La Media (X̄): El Centro de la Diana</h2>
+      </div>
+
+      <!-- Sección 1: ¿Qué es en palabras sencillas? -->
+      <div class="lesson-section">
+        <div class="lesson-section-header">
+          <span class="section-tag">Paso 1</span>
+          <h3>¿Qué significa este concepto en palabras sencillas?</h3>
+        </div>
+        <p class="lesson-text" id="conceptExplanationText">
+          Cargando explicación...
+        </p>
+      </div>
+
+      <!-- Sección 2: La Analogía Cotidiana del Piso de Planta -->
+      <div class="analogy-highlight-box">
+        <div class="analogy-icon-big" id="conceptAnalogyIcon">🎯</div>
+        <div class="analogy-body">
+          <h4 id="conceptAnalogyTitle">Analogía: ¿Hacia dónde apunta la máquina?</h4>
+          <p id="conceptAnalogyText">
+            Imagina que lanzas dardos a una diana. La media nos dice hacia dónde se van los tiros en general.
+          </p>
+        </div>
+      </div>
+
+      <!-- Sección 3: ¿Cómo se ve e interpreta en la gráfica? -->
+      <div class="lesson-section">
+        <div class="lesson-section-header">
+          <span class="section-tag">Paso 2</span>
+          <h3>¿Cómo se ve e interpreta visualmente en la gráfica?</h3>
+        </div>
+        <div class="concept-visual-illustration" id="conceptIllustrationBox">
+          <!-- SVG dinámico de la lección -->
+        </div>
+      </div>
+
+      <!-- Sección 4: Regla de Oro para el Operador / Inspector -->
+      <div class="golden-rules">
+        <h4><span>💡</span> Regla de Oro para el Piso de Planta</h4>
+        <p id="conceptGoldenRule">
+          Si la media se mueve, el proceso cambió. No toques la máquina si la media está en la meta.
+        </p>
+      </div>
+
+      <!-- Botón para iniciar los ejercicios después de leer -->
+      <button class="btn-primary" style="padding: 1.1rem; font-size: 1.05rem;" onclick="startLevelExercises()">
+        <span>🎯 ¡Concepto Aprendido! Pasar a los 3 Ejercicios</span>
+        <span>➡️</span>
+      </button>
+    </section>
+
+    <!-- 3. VISTA: EJERCICIOS PRÁCTICOS CON GRÁFICA INTERACTIVA -->
+    <section id="viewExercise" class="view-card exercise-card hidden">
+      <div class="exercise-meta-bar">
+        <div class="exercise-num-pill" id="exercisePill">
+          <span>📊</span>
+          <span id="exerciseCounterText">Ejercicio 1 de 3</span>
+        </div>
+
+        <div class="exercise-dots">
+          <div class="ex-dot active" id="dot1"></div>
+          <div class="ex-dot" id="dot2"></div>
+          <div class="ex-dot" id="dot3"></div>
+        </div>
+      </div>
+
+      <!-- Gráfico SVG Interactivo del Ejercicio -->
+      <div class="chart-container">
+        <div class="chart-header">
+          <div class="chart-title-box">
+            <span>📈</span>
+            <span id="chartTitle">Gráfica de Especificación del Proceso</span>
+          </div>
+          <div class="chart-legend" id="chartLegend">
+            <div class="legend-item"><span class="legend-line nominal"></span><span>Meta</span></div>
+            <div class="legend-item"><span class="legend-line ctrl"></span><span>Límites de Especificación (LEI /
+                LES)</span></div>
+          </div>
+        </div>
+
+        <div id="svgContainer" class="svg-chart">
+          <!-- Render dinámico SVG -->
+        </div>
+      </div>
+
+      <!-- Pregunta en Lenguaje Natural -->
+      <div class="question-box">
+        <p class="question-prompt" id="questionText">
+          Cargando pregunta...
+        </p>
+      </div>
+
+      <!-- Opciones de Selección Múltiple -->
+      <div class="options-grid" id="optionsGrid">
+        <!-- Generado dinámicamente -->
+      </div>
+
+      <!-- Feedback / Explicación Didáctica al responder -->
+      <div class="feedback-box hidden" id="feedbackBox">
+        <div class="feedback-icon" id="feedbackIcon">✅</div>
+        <div class="feedback-text">
+          <h4 id="feedbackTitle">¡Correcto!</h4>
+          <p id="feedbackExplanation">Explicación didáctica.</p>
+        </div>
+      </div>
+
+      <!-- Botón de Siguiente Ejercicio -->
+      <button class="btn-primary hidden" id="btnNextExercise" onclick="nextExercise()">
+        <span id="btnNextExerciseText">Siguiente Ejercicio</span>
+        <span>➡️</span>
+      </button>
+    </section>
+
+    <!-- 4. VISTA: RESULTADO DEL NIVEL (ÉXITO O REINICIO) -->
+    <section id="viewResult" class="view-card level-result-card hidden">
+      <div class="result-badge" id="resultBadge">🎉</div>
+      <h2 class="result-title" id="resultTitle">¡Nivel Superado con Éxito!</h2>
+      <p class="result-subtitle" id="resultSubtitle">
+        Has demostrado que dominas este concepto con 3 de 3 aciertos.
+      </p>
+
+      <div class="stats-pill-row">
+        <div class="result-stat-pill">
+          <div class="num" id="resultScorePill">3 / 3</div>
+          <div class="label">Aciertos</div>
+        </div>
+        <div class="result-stat-pill">
+          <div class="num" id="resultBonusPill">+100 pts</div>
+          <div class="label">Puntaje</div>
+        </div>
+      </div>
+
+      <div id="resultActionContainer">
+        <!-- Botón para avanzar o reiniciar inyectado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- 5. VISTA: CERTIFICADO EN COMPETENCIA TÉCNICA EN SPC -->
+    <section id="viewCertificate" class="view-card certificate-card hidden">
+      <!-- Marco Ornamental Interior de Diploma -->
+      <div class="cert-border-ornament">
+
+        <!-- Encabezado Institucional con Emblema -->
+        <div class="cert-header">
+          <div class="cert-institution">
+            <span>🏭</span>
+            <span>INDUGRAL • GESTIÓN DE CALIDAD & METROLOGÍA INDUSTRIAL</span>
+          </div>
+
+          <div class="cert-badge-row">
+            <div class="cert-gold-seal">
+              <svg viewBox="0 0 100 100" class="cert-seal-svg">
+                <defs>
+                  <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#fde047" />
+                    <stop offset="50%" stop-color="#f59e0b" />
+                    <stop offset="100%" stop-color="#b45309" />
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="46" fill="url(#goldGrad)" stroke="#78350f" stroke-width="2.5" />
+                <circle cx="50" cy="50" r="39" fill="none" stroke="#fef08a" stroke-width="1.5" stroke-dasharray="3,2" />
+                <path d="M50 20 L54 32 L67 32 L56 40 L60 52 L50 44 L40 52 L44 40 L33 32 L46 32 Z" fill="#ffffff"
+                  stroke="#78350f" stroke-width="0.8" />
+                <text x="50" y="66" fill="#ffffff" font-size="7.5" font-weight="900" text-anchor="middle"
+                  letter-spacing="1">CERTIFICADO</text>
+                <text x="50" y="76" fill="#fef08a" font-size="6.5" font-weight="bold" text-anchor="middle">COMPETENCIA
+                  SPC</text>
+                <text x="50" y="85" fill="#ffffff" font-size="5" font-weight="bold" text-anchor="middle">★ ACREDITADO
+                  100% ★</text>
+              </svg>
+            </div>
+          </div>
+
+          <h2 class="cert-main-title">Certificado en Competencia Técnica en SPC</h2>
+          <p class="cert-main-subtitle">Control Estadístico de Procesos (SPC) • Ficha Técnica & Análisis de Capacidad
+            Industrial</p>
+        </div>
+
+        <div class="cert-divider-line"></div>
+
+        <!-- Mención al Participante -->
+        <p class="cert-award-text">Por cuanto ha demostrado criterio técnico, dominio analítico y excelencia operativa
+          en la interpretación de cartas de control y especificaciones de calidad en planta, se confiere la presente
+          acreditación a:</p>
+
+        <div class="cert-name-box">
+          <div class="cert-name" id="certPlayerName">Juan Grisales</div>
+          <div class="cert-underline"></div>
+          <div class="cert-id" id="certPlayerId">ID de Calidad: #38611991</div>
+        </div>
+
+        <!-- Texto Formativo de Calidad Redactado Profesional y Claramente -->
+        <p class="cert-body-text">
+          Ha completado con éxito el <strong>100% de los 7 niveles formativos</strong> de interpretación gráfica de
+          calidad en planta, demostrando dominio y criterio técnico en:
+          <strong>Media (X̄)</strong>,
+          <strong>Rango (R)</strong>,
+          <strong>Desviación Estándar (σ)</strong>,
+          <strong>Límites de Especificación (LEI y LES)</strong>,
+          <strong>Tendencias y Rachas</strong>,
+          <strong>Capacidad Potencial del Proceso (Cp)</strong> y
+          <strong>Capacidad Real y Centrado (Cpk)</strong>.
+        </p>
+
+        <!-- Sello Oficial de Aprobación de Calidad ("Sellito") -->
+        <div class="cert-stamp-container"
+          style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 2rem auto 0.8rem;">
+          <div class="cert-stamp-circle">
+            <span>INDUGRAL</span>
+            <span>CALIDAD</span>
+            <span>✔ APROBADO</span>
+          </div>
+          <p class="cert-date-score"
+            style="font-size: 0.92rem; color: var(--text-muted); margin-top: 1.2rem; font-family: var(--font-sans);">
+            <strong>Fecha Oficial:</strong> <span id="certDateDisplay">6 de noviembre de 2026</span> &nbsp;•&nbsp;
+            <strong>Puntaje Acreditado:</strong> <span id="certTotalScore" style="color: #d97706; font-weight: 800;">700
+              pts</span>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Barra de Acciones (Oculta al Imprimir) -->
+      <div class="cert-actions no-print">
+        <button class="btn-primary" style="max-width: 240px; background: linear-gradient(135deg, #0284c7, #0369a1);"
+          onclick="window.print()">
+          <span>🖨️ Imprimir / Guardar en PDF</span>
+        </button>
+        <button class="btn-ranking" style="padding: 12px 24px; font-size: 0.95rem;" onclick="openRankingModal()">
+          <span>🏆 Ver Tabla de Posiciones</span>
+        </button>
+        <button class="btn-primary" style="max-width: 220px; background: #334155;" onclick="restartGameFromBeginning()">
+          <span>🔄 Repasar / Jugar de Nuevo</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: RANKING EN VIVO DESDE NEON POSTGRESQL -->
+  <div class="modal-overlay" id="rankingModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><span>🏆</span> Tabla de Posiciones · Neon PostgreSQL</h3>
+        <button class="modal-close" onclick="closeRankingModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <table class="table-ranking">
+          <thead>
+            <tr>
+              <th style="width: 45px;">Puesto</th>
+              <th>Participante</th>
+              <th style="text-align: center;">Nivel</th>
+              <th style="text-align: right;">Puntaje</th>
+            </tr>
+          </thead>
+          <tbody id="rankingTableBody">
+            <tr>
+              <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                Cargando datos desde Neon...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT DEL JUEGO Y PEDAGOGÍA SPC (7 NIVELES) -->
+  <script>
+    /* =====================================================================
+       GESTIÓN DEL TEMA (CLARO / OSCURO)
+       Por defecto se activa el TEMA CLARO.
+       ===================================================================== */
+    let currentTheme = localStorage.getItem('spc_theme') || 'light';
+
+    function applyTheme(theme) {
+      currentTheme = theme;
+      try { localStorage.setItem('spc_theme', theme); } catch (e) { }
+      const isLight = (theme === 'light');
+
+      if (isLight) {
+        document.body.classList.add('theme-light');
+      } else {
+        document.body.classList.remove('theme-light');
+      }
+
+      const toggleIcon = document.getElementById('themeToggleIcon');
+      const toggleText = document.getElementById('themeToggleText');
+      if (toggleIcon) toggleIcon.textContent = isLight ? '🌙' : '☀️';
+      if (toggleText) toggleText.textContent = isLight ? 'Modo Oscuro' : 'Modo Claro';
+
+      // Si la vista de ejercicio está visible, redibujar gráfico con los colores del tema
+      const exerciseView = document.getElementById('viewExercise');
+      if (exerciseView && !exerciseView.classList.contains('hidden') && typeof LEVELS_DATA !== 'undefined') {
+        const lvlData = LEVELS_DATA[currentLevel - 1];
+        if (lvlData && lvlData.exercises && lvlData.exercises[currentExerciseIndex]) {
+          const ex = lvlData.exercises[currentExerciseIndex];
+          renderChartLegend(ex);
+          if (ex.chartType === 'bell' || ex.chartType === 'bellCompare') {
+            renderBellCurveChart(ex);
+          } else {
+            renderSvgChart(ex);
+          }
+        }
+      }
+    }
+
+    function toggleTheme() {
+      applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+    }
+
+    /* =====================================================================
+       ESTADO GLOBAL DEL JUGADOR Y CONEXIÓN
+       ===================================================================== */
+    let player = {
+      id: '',
+      name: '',
+      currentLevel: 1,
+      maxLevel: 1,
+      totalScore: 0,
+      completed: false,
+      levelScores: {}
+    };
+
+    let currentLevel = 1;
+    let currentExerciseIndex = 0;
+    let currentLevelHits = 0;
+    let isAnswerChecked = false;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(140, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'win') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.1);
+          osc.frequency.setValueAtTime(783.99, now + 0.2);
+          osc.frequency.setValueAtTime(1046.50, now + 0.3);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        }
+      } catch (e) { }
+    }
+
+    /* =====================================================================
+       BASE DE DATOS Y SERVIDOR NEON
+       ===================================================================== */
+    const API_BASE = window.location.origin;
+
+    async function checkNeonHealth() {
+      const dot = document.getElementById('dbStatusDot');
+      const text = document.getElementById('dbStatusText');
+      try {
+        const res = await fetch(`${API_BASE}/api/health`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          dot.style.backgroundColor = '#10b981';
+          dot.style.boxShadow = '0 0 8px #10b981';
+          text.textContent = 'Neon Conectado';
+          return true;
+        }
+      } catch (e) { }
+      dot.style.backgroundColor = '#f59e0b';
+      dot.style.boxShadow = '0 0 8px #f59e0b';
+      text.textContent = 'Modo Local';
+      return false;
+    }
+
+    async function apiLogin(playerId, name) {
+      try {
+        const res = await fetch(`${API_BASE}/api/player/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerId, name })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          return data.player;
+        }
+      } catch (e) {
+        console.warn('Fallo API Neon login, usando localStorage', e);
+      }
+      let localStore = JSON.parse(localStorage.getItem('spc_player_' + playerId) || 'null');
+      if (!localStore) {
+        localStore = {
+          player_id: playerId,
+          name: name,
+          current_level: 1,
+          max_level: 1,
+          total_score: 0,
+          completed: false,
+          level_scores: {}
+        };
+      } else {
+        localStore.name = name;
+      }
+      localStorage.setItem('spc_player_' + playerId, JSON.stringify(localStore));
+      return localStore;
+    }
+
+    async function apiCompleteLevel(level, score) {
+      // 1. Actualizar inmediatamente en cliente
+      player.levelScores[level] = score;
+      player.totalScore = Object.values(player.levelScores).reduce((a, b) => (parseInt(a, 10) || 0) + (parseInt(b, 10) || 0), 0);
+      player.currentLevel = Math.min(7, Math.max(player.currentLevel, level + 1));
+      player.maxLevel = Math.max(player.maxLevel, player.currentLevel);
+      if (level >= 7) player.completed = true;
+
+      // Reflejar marcador en pantalla
+      const scoreDisp = document.getElementById('scoreDisplay');
+      if (scoreDisp) scoreDisp.textContent = player.totalScore + ' pts';
+
+      if (player.completed) {
+        const certBtn = document.getElementById('headerBtnCert');
+        if (certBtn) certBtn.classList.remove('hidden');
+      }
+
+      // 2. Sincronizar con Neon PostgreSQL
+      try {
+        const res = await fetch(`${API_BASE}/api/player/level-complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerId: player.id,
+            level: level,
+            score: score,
+            answersDetail: { hits: currentLevelHits, date: new Date().toISOString() }
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.player) {
+            player.totalScore = parseInt(data.player.total_score, 10) || player.totalScore;
+            player.currentLevel = parseInt(data.player.current_level, 10) || player.currentLevel;
+            player.maxLevel = parseInt(data.player.max_level, 10) || player.maxLevel;
+            player.completed = !!data.player.completed;
+            if (data.player.level_scores) {
+              player.levelScores = typeof data.player.level_scores === 'object' ? data.player.level_scores : JSON.parse(data.player.level_scores);
+            }
+            if (scoreDisp) scoreDisp.textContent = player.totalScore + ' pts';
+          }
+        }
+      } catch (e) {
+        console.warn('Fallo API Neon level-complete, usando almacenamiento local', e);
+      }
+
+      localStorage.setItem('spc_player_' + player.id, JSON.stringify(player));
+      return player;
+    }
+
+    async function apiFailLevel(level) {
+      try {
+        await fetch(`${API_BASE}/api/player/level-fail`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerId: player.id,
+            level: level,
+            answersDetail: { hits: currentLevelHits, date: new Date().toISOString() }
+          })
+        });
+      } catch (e) {
+        console.warn('Fallo API Neon level-fail', e);
+      }
+    }
+
+    async function loadRanking() {
+      const tbody = document.getElementById('rankingTableBody');
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Consultando base de datos Neon...</td></tr>`;
+      try {
+        const res = await fetch(`${API_BASE}/api/ranking`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ranking && data.ranking.length > 0) {
+            tbody.innerHTML = data.ranking.map((row, idx) => {
+              const rankCls = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+              return `
+                <tr>
+                  <td><span class="rank-badge ${rankCls}">${idx + 1}</span></td>
+                  <td>
+                    <div style="font-weight: 700;">${escapeHtml(row.name)}</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">${escapeHtml(row.player_id)}</div>
+                  </td>
+                  <td style="text-align: center;">
+                    <span style="font-size: 0.8rem; font-weight: 800; background: rgba(56,189,248,0.15); color: #38bdf8; padding: 2px 8px; border-radius: 12px;">
+                      Nivel ${row.current_level}${row.completed ? ' ⭐' : ''}
+                    </span>
+                  </td>
+                  <td style="text-align: right; font-weight: 800; font-family: var(--font-mono); color: #fbbf24;">
+                    ${row.total_score} pts
+                  </td>
+                </tr>
+              `;
+            }).join('');
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Error al cargar ranking', e);
+      }
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 1.5rem;">Aún no hay puntuaciones registradas en Neon. ¡Sé el primero en jugar!</td></tr>`;
+    }
+
+    function openRankingModal() {
+      document.getElementById('rankingModal').classList.add('active');
+      loadRanking();
+    }
+
+    function closeRankingModal() {
+      document.getElementById('rankingModal').classList.remove('active');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+    }
+
+    /* =====================================================================
+       CONTENIDO EDUCATIVO: 7 NIVELES DIDÁCTICOS DE SPC
+       ===================================================================== */
+    const LEVELS_DATA = [
+      /* NIVEL 1 */
+      {
+        level: 1,
+        title: 'La Media (X̄): El Centro de la Diana',
+        explanation: 'En cualquier línea de producción de nuestra planta, la <strong>Media (X̄)</strong> es simplemente el <strong>promedio</strong> de las piezas que mides. Es el "centro de gravedad" de la máquina. Si la ficha técnica de tu producto exige 500 gramos, la media nos dice con exactitud hacia dónde está apuntando la máquina. Si el promedio da 508g, estamos regalando producto y arriesgando sobrepeso; si da 492g, el producto saldrá bajo de peso y generará reclamos del cliente.',
+        analogyIcon: '🎯',
+        analogyTitle: 'Analogía: ¿Hacia dónde apunta la máquina?',
+        analogyText: 'Imagina que lanzas dardos a una diana. Cada dardo es una pieza que sale de la máquina. La Media nos dice hacia dónde quedó el grupo de tiros: en el centro exacto, desviado hacia arriba o desviado hacia abajo.',
+        goldenRule: 'La Media es el tiro al blanco. Si los puntos de la gráfica se desplazan hacia arriba o hacia abajo respecto a la meta nominal, la máquina se descalibró y hay que ajustar su centrado.',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 100" style="max-width: 100%; height: 90px;">
+            <rect width="540" height="100" rx="8" class="svg-lesson-bg"/>
+            <line x1="20" y1="50" x2="520" y2="50" stroke="#10b981" stroke-width="2.5"/>
+            <text x="30" y="42" fill="#10b981" font-size="11" font-weight="bold" font-family="sans-serif">LÍNEA CENTRAL = META NOMINAL</text>
+            <polyline points="50,54 100,44 150,56 200,48 250,52 300,46 350,55 400,49 450,53 500,47" fill="none" stroke="#38bdf8" stroke-width="2.2"/>
+            <circle cx="50" cy="54" r="4.5" fill="#38bdf8"/><circle cx="100" cy="44" r="4.5" fill="#38bdf8"/>
+            <circle cx="150" cy="56" r="4.5" fill="#38bdf8"/><circle cx="200" cy="48" r="4.5" fill="#38bdf8"/>
+            <circle cx="250" cy="52" r="4.5" fill="#38bdf8"/><circle cx="300" cy="46" r="4.5" fill="#38bdf8"/>
+            <circle cx="350" cy="55" r="4.5" fill="#38bdf8"/><circle cx="400" cy="49" r="4.5" fill="#38bdf8"/>
+            <circle cx="450" cy="53" r="4.5" fill="#38bdf8"/><circle cx="500" cy="47" r="4.5" fill="#38bdf8"/>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Llenado de Botellas (Meta = 500 ml, LEI = 496 ml, LES = 504 ml)',
+            yMin: 494, yMax: 506, target: 500, les: 504, lei: 496, ucl: 504, lcl: 496,
+            points: [499.5, 501.2, 498.8, 500.5, 499.0, 501.8, 500.2, 499.7, 500.8, 500.0],
+            question: 'Observa la línea verde central (Meta = 500 ml) y la forma en que los puntos se reparten a su alrededor entre el LEI (496) y el LES (504). ¿Cómo describirías el centrado del proceso?',
+            options: [
+              'Está totalmente descentrado hacia arriba y regalando producto sin control.',
+              'Está bien centrado: los puntos oscilan de forma equilibrada arriba y abajo de la meta de 500 ml.',
+              'La máquina está averiada porque casi ningún punto cayó exactamente en 500.0 ml.',
+              'El proceso no tiene promedio porque las lecturas no son idénticas.'
+            ],
+            correct: 1,
+            explanation: '¡Excelente! En cualquier máquina industrial, los puntos nunca son idénticos; lo normal y sano es que oscilen cerca de la línea central. El proceso está perfectamente centrado en su meta.'
+          },
+          {
+            chartTitle: 'Longitud de Corte de Tubos (Meta = 100 mm, LEI = 92 mm, LES = 108 mm)',
+            yMin: 90, yMax: 112, target: 100, les: 108, lei: 92, ucl: 108, lcl: 92,
+            points: [100.2, 99.8, 100.5, 99.4, 100.1, 106.2, 106.8, 105.9, 106.5, 107.0],
+            calloutIndex: 5, calloutText: 'Cambio de Turno (Muestra 6)',
+            question: 'Mira con atención lo que ocurrió a partir de la muestra 6 en el cambio de turno. ¿Qué le pasó a la media del proceso respecto a la meta de 100 mm?',
+            options: [
+              'La media sigue siendo 100 mm porque la línea verde no se ha borrado.',
+              'El proceso mejoró porque entre más alto sea el número, mejor es la calidad.',
+              'Es una variación común completamente normal que no requiere ninguna investigación.',
+              'La media subió bruscamente: el nuevo turno dejó la máquina descalibrada hacia valores más altos, acercándose al LES.'
+            ],
+            correct: 3,
+            explanation: '¡Muy bien visto! Cuando varios puntos seguidos se mudan a un nivel superior, la media del proceso se desplazó (causa especial). Hay que revisar de inmediato qué descalibraron en el cambio de turno antes de que sobrepase el LES.'
+          },
+          {
+            chartTitle: 'Comparativa de Dos Máquinas (Meta = 50 kg, LEI = 46 kg, LES = 54 kg)',
+            yMin: 35, yMax: 60, target: 50, les: 54, lei: 46, ucl: 54, lcl: 46,
+            primarySeriesName: 'Máquina A (Línea Azul)',
+            points: [50.2, 49.8, 50.5, 49.5, 50.1, 49.9, 50.3, 50.0],
+            secondarySeries: {
+              name: 'Máquina B (Línea Morada)',
+              points: [44.2, 43.8, 44.5, 43.9, 44.1, 43.5, 44.0, 44.2],
+              color: '#8b5cf6'
+            },
+            question: 'Si la ficha técnica exige una meta nominal de 50 kg con límites entre LEI = 46 kg y LES = 54 kg, ¿cuál de las dos máquinas tiene la MEDIA correcta?',
+            options: [
+              'La Máquina B (línea morada), porque al empacar menos peso ahorra costos a la empresa.',
+              'Ninguna de las dos, porque ambas presentan pequeñas variaciones normales.',
+              'La Máquina A (línea azul), porque su promedio real ronda exactamente los 50 kg requeridos.',
+              'La Máquina B (línea morada), porque sus lecturas son más bajas.'
+            ],
+            correct: 2,
+            explanation: '¡Exacto! La Máquina A (línea azul) cumple con el centrado del proceso (50 kg). La Máquina B (línea morada) está descalibrada hacia abajo (~44 kg), cayendo por debajo del LEI (46 kg) y entregando producto con menos peso del prometido, lo que causaría multas y reclamos.'
+          }
+        ]
+      },
+
+      /* NIVEL 2 */
+      {
+        level: 2,
+        title: 'Rango (R) y Desviación (σ): La Dispersión',
+        explanation: 'El <strong>Rango (R)</strong> es la resta más rápida del mundo: <strong>Valor Más Alto menos Valor Más Bajo</strong> de una muestra. La <strong>Desviación Estándar (σ)</strong> mide qué tan <strong>agrupadas o dispersas</strong> están las piezas. Un proceso de alta calidad tiene disparos muy juntos (poca variación); un proceso con problemas dispara como escopeta (piezas muy disparejas entre sí).',
+        analogyIcon: '📏',
+        analogyTitle: 'Analogía: Disparo de Francotirador vs Escopetazo',
+        analogyText: 'El francotirador pone todas las balas en el mismo agujero (poca variación, piezas idénticas). La escopeta lanza perdigones por todos lados (gran variación: unas piezas salen muy grandes y otras muy pequeñas).',
+        goldenRule: 'Tener buen promedio no sirve de nada si tu variación es gigante. Reducir la dispersión (rango y desviación) es el verdadero secreto de la calidad.',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 100" style="max-width: 100%; height: 90px;">
+            <rect width="540" height="100" rx="8" class="svg-lesson-bg"/>
+            <text x="30" y="24" fill="#10b981" font-size="11" font-weight="bold">MÁQUINA REPETIBLE (Baja Dispersión)</text>
+            <circle cx="60" cy="45" r="4.5" fill="#10b981"/><circle cx="85" cy="48" r="4.5" fill="#10b981"/>
+            <circle cx="110" cy="44" r="4.5" fill="#10b981"/><circle cx="135" cy="47" r="4.5" fill="#10b981"/>
+            <line x1="60" y1="62" x2="135" y2="62" stroke="#10b981" stroke-width="1.8"/>
+            <text x="65" y="76" class="svg-sub-text" font-size="10">Rango R = 0.4 mm</text>
+            
+            <text x="300" y="24" fill="#ef4444" font-size="11" font-weight="bold">MÁQUINA DISPERSA (Alta Dispersión)</text>
+            <circle cx="320" cy="30" r="4.5" fill="#ef4444"/><circle cx="360" cy="65" r="4.5" fill="#ef4444"/>
+            <circle cx="400" cy="25" r="4.5" fill="#ef4444"/><circle cx="440" cy="70" r="4.5" fill="#ef4444"/>
+            <line x1="320" y1="82" x2="440" y2="82" stroke="#ef4444" stroke-width="1.8"/>
+            <text x="345" y="94" class="svg-sub-text" font-size="10">Rango R = 4.5 mm (¡Peligro!)</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Muestreo de 5 Piezas con Pie de Rey Digital',
+            yMin: 19.5, yMax: 21.5, target: 20.5, les: 21.2, lei: 19.8, ucl: 21.2, lcl: 19.8,
+            points: [20.2, 20.9, 20.1, 20.5, 20.3],
+            question: 'Un inspector midió 5 piezas en la línea: [20.2, 20.9, 20.1, 20.5, 20.3 mm]. ¿Cuál es el RANGO (R) de esta muestra?',
+            options: [
+              '20.9 mm (el valor más alto encontrado).',
+              '0.2 mm (la diferencia entre las dos primeras piezas).',
+              '0.8 mm (restando el valor más alto 20.9 menos el más bajo 20.1).',
+              '1.5 mm (el promedio de las mediciones).'
+            ],
+            correct: 2,
+            explanation: '¡Excelente! El Rango (R) siempre es: Máximo menos Mínimo (20.9 - 20.1 = 0.8 mm). Es la forma más rápida y sencilla de calcular la dispersión en planta.'
+          },
+          {
+            chartTitle: 'Consistencia de Operación: Turno Mañana vs Turno Noche (Meta = 10, LEI = 8, LES = 12)',
+            yMin: 7.5, yMax: 13, target: 10, les: 12, lei: 8, ucl: 12, lcl: 8,
+            primarySeriesName: 'Turno Mañana (Línea Azul)',
+            points: [9.9, 10.1, 9.8, 10.2, 10.0, 10.1, 9.9, 10.0],
+            secondarySeries: {
+              name: 'Turno Noche (Línea Morada)',
+              points: [8.4, 11.6, 8.8, 11.2, 8.6, 11.8, 9.0, 11.4],
+              color: '#8b5cf6'
+            },
+            question: 'Compara la nube de puntos del Turno Mañana (línea azul) con el Turno Noche (línea morada). ¿Cuál de los dos turnos tiene MENOR dispersión y mayor consistencia dentro de los límites (LEI = 8, LES = 12)?',
+            options: [
+              'El Turno Mañana (línea azul), porque sus puntos están muy apretados y homogéneos cerca del centro.',
+              'El Turno Noche (línea morada), porque sus piezas aprovechan todo el ancho de la gráfica.',
+              'Ambos son iguales porque tienen el mismo promedio de 10.',
+              'El Turno Noche (línea morada), porque alcanza valores más altos.'
+            ],
+            correct: 0,
+            explanation: '¡Así es! A menor dispersión entre las piezas, menor es la desviación estándar (σ). El Turno Mañana (línea azul) fabrica piezas prácticamente idénticas; el Turno Noche (línea morada) presenta una dispersión excesiva que roza peligrosamente el LEI y el LES.'
+          },
+          {
+            chartTitle: 'Carta de Rangos (R) - Detección de Muestra Anormal',
+            yMin: 0, yMax: 8, target: 2.0, les: 4.5, lei: 0, ucl: 4.5, lcl: 0,
+            points: [1.8, 2.2, 1.9, 2.4, 2.0, 1.7, 6.8, 2.1, 1.9, 2.0],
+            calloutIndex: 6, calloutText: '¡Pico en Muestra 7!',
+            question: 'En la Carta de Rangos, observa la muestra #7 donde el valor se disparó a 6.8 (superando el límite superior de rango de 4.5). ¿Qué significa operativamente en planta?',
+            options: [
+              'Que la máquina aumentó la velocidad al triple en ese instante.',
+              'Que todas las piezas salieron exactamente del mismo tamaño.',
+              'Que el operario ajustó la máquina a la perfección.',
+              'Que en esa muestra hubo una diferencia gigante entre la pieza más alta y la más baja (pérdida súbita de uniformidad en el lote).'
+            ],
+            correct: 3,
+            explanation: '¡Brillante! Un disparo en la carta de rangos significa que la máquina perdió uniformidad: en ese subgrupo salió una pieza muy grande y otra muy chica a la vez.'
+          }
+        ]
+      },
+
+      /* NIVEL 3 */
+      {
+        level: 3,
+        title: 'Límites de Especificación (LEI y LES): La Ficha Técnica',
+        explanation: 'En nuestra planta, la calidad del producto se define mediante la <strong>Ficha Técnica</strong>, la cual establece los <strong>Límites de Especificación</strong>:<br><br>1) <strong>LES (Límite de Especificación Superior)</strong>: Es el valor máximo permitido. Ninguna pieza puede superar este número.<br>2) <strong>LEI (Límite de Especificación Inferior)</strong>: Es el valor mínimo permitido. Ninguna pieza puede medir menos de este número.<br>3) <strong>Meta Nominal</strong>: Es el centro óptimo donde queremos que trabaje la máquina.<br><br>Toda pieza fabricada entre el <strong>LEI</strong> y el <strong>LES</strong> es <strong>producto conforme</strong> (aprobado para entrega). Cualquier punto que caiga por fuera de estos límites se considera <strong>producto no conforme (defecto, chatarra o reproceso)</strong> y exige acción inmediata del equipo.',
+        analogyIcon: '🥅',
+        analogyTitle: 'Analogía: Los Postes de una Portería',
+        analogyText: 'Imagina una portería de fútbol: el poste izquierdo es el LEI y el poste derecho es el LES. La red en el centro es la Meta. Todo tiro que entre entre los postes es un gol válido (producto conforme). Si el balón pega por fuera del poste derecho (LES) o del poste izquierdo (LEI), el tiro se fue de la cancha: es un tiro fallido (producto defectuoso).',
+        goldenRule: 'Toda la producción debe permanecer entre el LEI y el LES. Si una lectura cruza el LES o baja del LEI, se generó producto defectuoso: debes aislar el lote, detener la anomalía y recalibrar el equipo.',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 100" style="max-width: 100%; height: 90px;">
+            <rect width="540" height="100" rx="8" class="svg-lesson-bg"/>
+            <line x1="20" y1="20" x2="520" y2="20" stroke="#ef4444" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="30" y="16" fill="#ef4444" font-size="9.5" font-weight="bold">LES = LÍMITE DE ESPECIFICACIÓN SUPERIOR (Máximo Permitido)</text>
+            
+            <rect x="20" y="22" width="500" height="56" fill="rgba(16,185,129,0.08)"/>
+            <line x1="20" y1="50" x2="520" y2="50" stroke="#10b981" stroke-width="2"/>
+            <text x="30" y="46" fill="#10b981" font-size="9.5" font-weight="bold">META NOMINAL = CENTRO IDEAL DE CALIDAD</text>
+            <text x="310" y="66" fill="#10b981" font-size="9" font-weight="bold">✔ ZONA DE CONFORMIDAD (Producto Bueno)</text>
+            
+            <line x1="20" y1="80" x2="520" y2="80" stroke="#ef4444" stroke-width="2" stroke-dasharray="6,3"/>
+            <text x="30" y="94" fill="#ef4444" font-size="9.5" font-weight="bold">LEI = LÍMITE DE ESPECIFICACIÓN INFERIOR (Mínimo Permitido)</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Muestra #8 Fuera del Límite de Especificación Superior (LES = 112)',
+            yMin: 80, yMax: 125, target: 100, les: 112, lei: 88, ucl: 112, lcl: 88,
+            points: [98, 102, 101, 97, 103, 100, 102, 118, 101, 99],
+            calloutIndex: 7, calloutText: '¡Punto #8 en 118! Cruza el LES',
+            question: 'Mira la muestra #8: llegó a 118 mm, sobrepasando la línea roja del LES (112 mm). Según la ficha técnica del producto, ¿qué significa esto y qué acción se debe tomar?',
+            options: [
+              'No pasa nada porque el promedio general sigue siendo cercano a 100 mm.',
+              'Es producto no conforme (fuera de especificación superior): se debe aislar el lote producido e intervenir la máquina para corregir el desvío.',
+              'Mover la línea roja del LES más arriba en la gráfica para que el punto quede adentro y no figure el defecto.',
+              'Felicitar al operario porque fabricó una pieza más grande.'
+            ],
+            correct: 1,
+            explanation: '¡Totalmente de acuerdo! Cualquier punto que cruce el LES (Límite de Especificación Superior) o baje del LEI (Límite de Especificación Inferior) es producto no conforme según la ficha técnica. La acción inmediata es retener/aislar el producto afectado y ajustar la máquina para evitar más piezas defectuosas.'
+          },
+          {
+            chartTitle: 'Nomenclatura de Calidad: Ficha Técnica del Producto',
+            yMin: 0, yMax: 10, target: 5, les: 8, lei: 2, ucl: 8, lcl: 2,
+            points: [5.1, 4.9, 5.2, 4.8, 5.0],
+            question: 'En el día a día de nuestra planta y en los requisitos de calidad del cliente, ¿qué significan con exactitud las siglas LEI y LES?',
+            options: [
+              'LEI = Límite de Empaque Inicial y LES = Límite de Empaque Secundario.',
+              'Son líneas decorativas de la gráfica sin relación con la calidad del producto.',
+              'LEI = Límite de Especificación Inferior (mínimo permitido) y LES = Límite de Especificación Superior (máximo permitido).',
+              'LEI significa lectura estándar interna y LES significa lectura externa suplementaria.'
+            ],
+            correct: 2,
+            explanation: '¡Excelente! En planta, LEI (Límite de Especificación Inferior) y LES (Límite de Especificación Superior) delimitan la ventana obligatoria de la ficha técnica. El producto debe cumplir estrictamente ambos límites.'
+          },
+          {
+            chartTitle: 'Dispersión de la Máquina Desbordando LEI y LES',
+            yMin: 38, yMax: 62, target: 50, les: 54, lei: 46, ucl: 54, lcl: 46,
+            points: [50, 43, 52, 42, 57, 49, 58, 44, 55, 50],
+            calloutIndex: 6, calloutText: 'Piezas fuera de LEI y LES',
+            question: 'Observa la gráfica: las piezas oscilan entre 42 y 58, saliéndose repetidamente por debajo de LEI (46) y por encima de LES (54). ¿Cuál es la conclusión técnica de calidad?',
+            options: [
+              'El proceso genera piezas defectuosas continuas: la máquina tiene demasiada dispersión para el rango permitido entre LEI y LES.',
+              'El proceso es perfectamente aceptable porque el promedio de los puntos está centrado en 50.',
+              'El problema se soluciona borrando la gráfica de la pantalla del computador.',
+              'Se debe acelerar la máquina para que las piezas salgan con mayor rapidez.'
+            ],
+            correct: 0,
+            explanation: '¡Brillante! Aunque la máquina esté centrada en 50, su alta variabilidad desborda tanto el LEI como el LES. Para ser conforme, la variación del proceso debe ser mucho más angosta que el espacio entre LEI y LES.'
+          }
+        ]
+      },
+
+      /* NIVEL 4 */
+      {
+        level: 4,
+        title: 'Tendencias y Patrones: Las Señales de la Máquina',
+        explanation: 'Las máquinas rara vez fallan de golpe. La mayoría de las veces, la gráfica te da <strong>pistas visuales tempranas</strong> antes de que una pieza se salga de especificación:<br><br>1) <strong>Tendencia en Escalera</strong>: 7 puntos subiendo o bajando seguidos (desgaste de cuchilla, calentamiento progresivo).<br>2) <strong>Racha o Desplazamiento</strong>: 8 puntos seguidos del mismo lado de la meta (nuevo lote de materia prima, cambio de ajuste).<br>3) <strong>Sobrecontrol en Zigzag</strong>: El operador perilleando la máquina en cada lectura en lugar de dejarla trabajar estable.',
+        analogyIcon: '🔍',
+        analogyTitle: 'Analogía: La Máquina te Avisa Antes de Fallar',
+        analogyText: 'Igual que un motor empieza a emitir un zumbido extraño antes de fundirse, la gráfica dibuja patrones no aleatorios turnos u horas antes de que una pieza rompa el LES o el LEI.',
+        goldenRule: 'No necesitas esperar a que un punto rompa el LEI o el LES para saber que algo anda mal; 7 puntos con maña o una racha son una causa especial confirmada.',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 100" style="max-width: 100%; height: 90px;">
+            <rect width="540" height="100" rx="8" class="svg-lesson-bg"/>
+            <line x1="20" y1="50" x2="520" y2="50" stroke="#10b981" stroke-width="1.5"/>
+            <line x1="20" y1="18" x2="520" y2="18" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,4"/>
+            <text x="30" y="14" fill="#ef4444" font-size="9" font-weight="bold">LES</text>
+            <polyline points="120,74 165,66 210,58 255,50 300,42 345,34 390,24" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+            <circle cx="120" cy="74" r="4.5" fill="#ef4444"/><circle cx="165" cy="66" r="4.5" fill="#ef4444"/>
+            <circle cx="210" cy="58" r="4.5" fill="#ef4444"/><circle cx="255" cy="50" r="4.5" fill="#ef4444"/>
+            <circle cx="300" cy="42" r="4.5" fill="#ef4444"/><circle cx="345" cy="34" r="4.5" fill="#ef4444"/>
+            <circle cx="390" cy="24" r="4.5" fill="#ef4444"/>
+            <text x="140" y="90" fill="#ef4444" font-size="11" font-weight="bold">7 PUNTOS EN SUBIDA = TENDENCIA CRÍTICA HACIA LES</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Temperatura de Sellado: 7 Puntos Consecutivos Acercándose al LES',
+            yMin: 160, yMax: 205, target: 180, les: 195, lei: 165, ucl: 195, lcl: 165,
+            points: [180, 179, 181, 180, 183, 185, 187, 189, 191, 193, 195],
+            calloutIndex: 6, calloutText: 'Tendencia en ascenso hacia LES',
+            question: 'Observa del punto 5 al 11: hay 7 puntos consecutivos que ascienden como una escalera recta hacia el LES (195). ¿Qué patrón es este y qué causa típica de planta suele provocarlo?',
+            options: [
+              'Es pura casualidad aleatoria y no significa nada.',
+              'Significa que la máquina se está enfriando rápidamente.',
+              'Indica que el producto está saliendo cada vez más perfecto.',
+              'Es una tendencia continua: suele deberse al calentamiento progresivo o desgaste de una herramienta que pronto romperá el LES.'
+            ],
+            correct: 3,
+            explanation: '¡Excelente ojo clínico! 7 puntos seguidos en una misma dirección nunca son casualidad estadística. Avisan calentamiento gradual, acumulación de residuo o desgaste antes de que reviente el límite de especificación superior (LES).'
+          },
+          {
+            chartTitle: 'Espesor de Película: 8 Puntos Consecutivos Bajo la Meta',
+            yMin: 40, yMax: 60, target: 50, les: 56, lei: 44, ucl: 56, lcl: 44,
+            points: [51, 50, 48, 47, 46.5, 48, 47.5, 47, 46.8, 47.2],
+            calloutIndex: 5, calloutText: 'Racha sostenida bajo la Meta',
+            question: 'Ningún punto ha cruzado todavía las líneas de especificación (LEI / LES). Sin embargo, calidad disparó una alarma preventiva por racha. ¿Por qué?',
+            options: [
+              'Porque los puntos deben estar obligatoriamente siempre encima de la línea central.',
+              'Porque 8 puntos consecutivos al mismo lado de la meta indican un desplazamiento de la media (racha) que terminará rompiendo el LEI.',
+              'Porque el inspector se equivocó al leer los números.',
+              'Porque se agotó el papel del gráfico.'
+            ],
+            correct: 1,
+            explanation: '¡Exacto! La probabilidad de que 8 monedas caigan cara seguidas por puro azar es menor al 1%. Algo empujó el proceso hacia abajo (materia prima más delgada, ajuste de presión) y hay que corregirlo antes de que rompa el LEI.'
+          },
+          {
+            chartTitle: 'Presión Hidráulica: Oscilación Artificial en Zigzag',
+            yMin: 90, yMax: 110, target: 100, les: 108, lei: 92, ucl: 108, lcl: 92,
+            points: [94, 106, 93, 107, 94, 106, 93, 107, 94, 106],
+            question: 'Observa este patrón de sube y baja extremo en cada muestra consecutiva (arriba-abajo-arriba-abajo). En la práctica industrial, ¿qué error humano típico causa esta oscilación?',
+            options: [
+              'La máquina está trabajando a su ritmo natural sin intervención de nadie.',
+              'Es una prueba de esfuerzo recomendada por la ficha técnica.',
+              'Sobrecontrol: el operario está manipulando la perilla de ajuste de la máquina en cada lectura en lugar de dejarla trabajar.',
+              'El medidor digital se quedó sin batería.'
+            ],
+            correct: 2,
+            explanation: '¡Excelente diagnóstico! El sobreajuste ("perilleo") ocurre cuando el operador reacciona a cada pieza individual. Al ajustar continuamente, él mismo inyecta más variabilidad al proceso en lugar de dejarlo estabilizarse.'
+          }
+        ]
+      },
+
+      /* NIVEL 5 */
+      {
+        level: 5,
+        title: 'Causas Comunes vs Causas Especiales: ¿Ajustar o No Ajustar?',
+        explanation: 'En el día a día de planta te enfrentarás a dos tipos de variabilidad:<br><br>1) <strong>Variación Común (Ruido Natural)</strong>: Pequeñas oscilaciones normales de la máquina, vibraciones leves o variaciones mínimas de temperatura. Los puntos oscilan sanos alrededor de la meta dentro de LEI y LES. <strong>¡DECISIÓN: NO TOCAR LA MÁQUINA!</strong><br><br>2) <strong>Causa Especial (Señal de Alarma)</strong>: Un evento anormal: lote de materia prima defectuoso, operador sin capacitación, herramienta rota o punto fuera de LEI/LES. <strong>¡DECISIÓN: DETENER, INVESTIGAR Y CORREGIR!</strong>',
+        analogyIcon: '⚖️',
+        analogyTitle: 'Analogía: El Pulso Humano vs Una Arritmia',
+        analogyText: 'Tu corazón late a 72 pulsaciones por minuto, pero unas veces a 71 y otras a 73: eso es variación común normal. Si de repente salta a 180 pulsaciones o se detiene, es una arritmia (causa especial) y requieres un médico de inmediato.',
+        goldenRule: 'Si es variación común dentro de especificación, ¡no toques la perilla! Si es causa especial o desborde de LEI/LES, ¡no te quedes de brazos cruzados: actúa y aísla el lote!',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 100" style="max-width: 100%; height: 90px;">
+            <rect width="540" height="100" rx="8" class="svg-lesson-bg"/>
+            <rect x="30" y="25" width="220" height="60" rx="8" class="svg-box-item" stroke="#10b981"/>
+            <text x="45" y="45" fill="#10b981" font-size="11" font-weight="bold">VARIACIÓN COMÚN (Estable)</text>
+            <text x="45" y="62" class="svg-sub-text" font-size="9.5">Puntos oscilando dentro de LEI/LES</text>
+            <text x="45" y="76" fill="#10b981" font-size="10" font-weight="bold">➜ DECISIÓN: ¡NO TOCAR!</text>
+            
+            <rect x="290" y="25" width="220" height="60" rx="8" class="svg-box-item" stroke="#ef4444"/>
+            <text x="305" y="45" fill="#ef4444" font-size="11" font-weight="bold">CAUSA ESPECIAL (Alarma)</text>
+            <text x="305" y="62" class="svg-sub-text" font-size="9.5">Punto fuera de LEI/LES o tendencia</text>
+            <text x="305" y="76" fill="#ef4444" font-size="10" font-weight="bold">➜ DECISIÓN: PARAR & REVISAR</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Proceso de Empaque Estable Dentro de Especificación',
+            yMin: 92, yMax: 108, target: 100, les: 106, lei: 94, ucl: 106, lcl: 94,
+            points: [100.2, 99.1, 101.4, 98.8, 100.6, 99.7, 101.1, 99.4, 100.8, 100.0],
+            question: 'El proceso está estable y dentro de sus límites de especificación (LEI = 94, LES = 106). El supervisor te pide: "Mueve medio milímetro la máquina a ver si logramos que todos los puntos den clavados en 100.0". ¿Qué debes responderle?',
+            options: [
+              'Explicarle que no se debe tocar: es variación común natural dentro de especificación y reajustarla aumentará la variabilidad innecesariamente.',
+              'Mover el ajuste de la máquina de inmediato como pidió el supervisor.',
+              'Apagar la máquina por 24 horas.',
+              'Cambiar las unidades a pulgadas para disimular la variación.'
+            ],
+            correct: 0,
+            explanation: '¡Criterio de inspector experto! El doctor Deming demostró que reaccionar a la variación común intentando "centrar cada pieza individual" es la causa principal de sobreajuste y desperdicio en la industria.'
+          },
+          {
+            chartTitle: 'Punto Fuera de Especificación en Muestra #12',
+            yMin: 15, yMax: 35, target: 25, les: 30, lei: 20, ucl: 30, lcl: 20,
+            points: [25, 26, 24, 25, 26, 25, 24, 26, 25, 24, 25, 32.5, 25],
+            calloutIndex: 11, calloutText: '¡Punto #12 en 32.5! Fuera de LES',
+            question: 'El punto #12 saltó a 32.5 superando el Límite de Especificación Superior (LES = 30). El operador dice: "Dejémoslo correr, es solo una pieza fuera". ¿Cuál es tu decisión de calidad?',
+            options: [
+              'Hacerle caso al operador y esperar a que el cliente reporte los reclamos.',
+              'Borrar el punto de la gráfica para no generar preguntas en la auditoría.',
+              'Subir el LES a 35 para que el punto quede adentro.',
+              'Rechazar el argumento: sobrepasar el LES genera producto no conforme por causa especial. Se debe contener el lote sospechoso e intervenir la máquina.'
+            ],
+            correct: 3,
+            explanation: '¡Totalmente acertado! Calidad preventiva significa cumplir la ficha técnica. El punto fuera de LES avisó que la estabilidad se quebró y generó piezas fuera de especificación.'
+          },
+          {
+            chartTitle: 'Tablero de Control de Planta: Priorización de Urgencia',
+            yMin: 0, yMax: 50, target: 25, les: 35, lei: 15, ucl: 35, lcl: 15,
+            points: [26, 24, 25, 25, 26, 24, 25],
+            question: 'En la planta hay 3 líneas: Línea A (estable dentro de LEI y LES), Línea B (7 puntos bajando en tendencia hacia LEI), y Línea C (con piezas rompiendo el LES de la ficha técnica). ¿Cuál es el orden de intervención correcto?',
+            options: [
+              'Primero Línea A porque es la más fácil de felicitar.',
+              'Primero Línea C (emergencia de producto no conforme fuera de LES), luego Línea B (prevención de tendencia), y monitoreo normal en Línea A.',
+              'Detener toda la planta completa por igual sin importar cuál línea sea.',
+              'Esperar al final del mes para revisar qué ocurrió.'
+            ],
+            correct: 1,
+            explanation: '¡Brillante! Priorización inteligente de recursos: detienes la fuga inmediata de calidad (C), atiendes la tendencia crítica en desarrollo (B) y dejas producir en paz a la línea bajo control (A).'
+          }
+        ]
+      },
+
+      /* NIVEL 6 */
+      {
+        level: 6,
+        title: 'Capacidad del Proceso (Cp): ¿Cabe el Proceso entre LEI y LES?',
+        explanation: 'El índice <strong>Cp (Capacidad potencial)</strong> compara el ancho total permitido por la ficha técnica (<strong>LES - LEI</strong>) contra el ancho de variación natural de la máquina (<strong>6σ</strong>):<br><br><span style="font-size:1.1rem; color:#0284c7; font-weight:bold;">Cp = (LES - LEI) / 6σ</span><br><br>Responde a una sola pregunta: <strong>¿Cabe físicamente la campana de variación de la máquina dentro de los límites de especificación (LEI y LES)?</strong><br><br>• <strong>Cp < 1.0</strong>: El proceso <strong>NO ES CAPAZ</strong>. La variación de la máquina (6σ) es más ancha que el espacio permitido (LES - LEI) y producirá defectos obligatoriamente.<br>• <strong>Cp = 1.0</strong>: Cabe justo al ras. Con cualquier mínima vibración, se producen defectos.<br>• <strong>Cp ≥ 1.33</strong>: El proceso es <strong>CAPAZ</strong> y cuenta con holgura de seguridad para operar confiablemente.',
+        analogyIcon: '🚗',
+        analogyTitle: 'Analogía: El Carro vs El Garaje de Especificación',
+        analogyText: 'El Garaje es el espacio entre los Límites de Especificación (LES - LEI). El Carro es el ancho de variación de la máquina (la campana de Gauss, 6σ). Si el carro mide 4 metros de ancho y la puerta del garaje mide 3 metros (Cp < 1), ¡no cabe de ninguna forma sin estrellarse contra el LEI o el LES!',
+        goldenRule: 'El Cp solo mide el ancho de la máquina comparado con los límites LEI y LES. No le importa si está centrada o no. Si Cp < 1.0, la máquina tiene demasiada variación y hay que repararla o calibrarla.',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 110" style="max-width: 100%; height: 95px;">
+            <rect width="540" height="110" rx="8" class="svg-lesson-bg"/>
+            <line x1="80" y1="15" x2="80" y2="95" stroke="#ef4444" stroke-width="2.5"/>
+            <line x1="460" y1="15" x2="460" y2="95" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="85" y="28" fill="#ef4444" font-size="10" font-weight="bold">LEI (Límite Inferior)</text>
+            <text x="455" y="28" fill="#ef4444" font-size="10" font-weight="bold" text-anchor="end">LES (Límite Superior)</text>
+            
+            <line x1="80" y1="40" x2="460" y2="40" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3"/>
+            <text x="270" y="36" class="svg-warn-text" font-size="10" font-weight="bold" text-anchor="middle">ESPECIFICACIÓN DE FICHA TÉCNICA (LES - LEI)</text>
+            
+            <path d="M 120 95 C 190 95, 230 48, 270 48 C 310 48, 350 95, 420 95" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2.5"/>
+            <text x="270" y="80" fill="#10b981" font-size="11" font-weight="bold" text-anchor="middle">CAMPANA ANGOSTA (Cp ≥ 1.33) ¡CABE HOLGADO ENTRE LEI Y LES!</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Comparación de Ancho: Campana vs Límites LEI y LES',
+            chartType: 'bell',
+            lei: 45, les: 55, specLcl: 45, specUcl: 55, mean: 50, sigma: 2.8,
+            question: 'Mira la gráfica: el ancho de variación de la máquina (6σ = 16.8 mm) desborda claramente los límites de especificación (LEI = 45 mm y LES = 55 mm, ancho disponible = 10 mm). ¿Qué podemos afirmar del Cp de este proceso?',
+            options: [
+              'Cp > 2.0 (Excelente): la máquina es super capaz porque la campana es muy ancha y ocupa todo el espacio.',
+              'El proceso es capaz únicamente si el operador trabaja en el turno de la noche.',
+              'Cp < 1.0 (No Capaz): la máquina es más ancha que el espacio entre LEI y LES, por lo que generará piezas defectuosas en ambos extremos.',
+              'El Cp no se puede calcular observando las gráficas.'
+            ],
+            correct: 2,
+            explanation: '¡Exacto! Cp = (LES - LEI) / 6σ = 10 / 16.8 = 0.59. Al ser menor a 1.0, el proceso es NO CAPAZ: la variación de la máquina desborda los límites de la ficha técnica.'
+          },
+          {
+            chartTitle: 'Proceso Esbelto con Amplia Holgura entre LEI y LES',
+            chartType: 'bell',
+            lei: 30, les: 70, specLcl: 30, specUcl: 70, mean: 50, sigma: 3.2,
+            question: 'En esta línea, la campana de la máquina es estrecha y cabe holgadamente dentro de los límites de especificación (LEI = 30 y LES = 70, Cp ≈ 2.0). ¿Cuál es el diagnóstico oficial de capacidad?',
+            options: [
+              'Proceso Altamente Capaz: la máquina tiene muy poca dispersión y cumple con creces la exigencia (Cp ≥ 1.33).',
+              'Proceso No Capaz porque sobra demasiado espacio libre en el garaje.',
+              'Hay que cerrar los límites para que la máquina sufra más.',
+              'La máquina debe aumentar su variación para ocupar todo el espacio entre límites.'
+            ],
+            correct: 0,
+            explanation: '¡Muy bien! Un Cp ≥ 1.33 es la meta industrial: significa que el proceso tiene suficiente colchón de seguridad para no generar producto no conforme ante variaciones comunes.'
+          },
+          {
+            chartTitle: 'Comparativa de Dos Máquinas frente a LEI y LES',
+            chartType: 'bellCompare',
+            lei: 40, les: 60, specLcl: 40, specUcl: 60, mean: 50, sigmaA: 4.8, sigmaB: 1.8,
+            question: 'La Máquina 1 (campana morada) tiene una distribución ancha y dispersa (6σ = 28.8); la Máquina 2 (campana verde) tiene una distribución angosta y concentrada (6σ = 10.8). Frente a los límites LEI = 40 y LES = 60 (ancho = 20), ¿cuál de las dos tiene un MEJOR índice Cp?',
+            options: [
+              'La Máquina 1 (morada), porque al ser más ancha produce piezas más grandes.',
+              'Ambas tienen el mismo Cp porque están centradas en 50.',
+              'Ninguna tiene Cp porque son máquinas distintas.',
+              'La Máquina 2 (verde), porque a menor dispersión (campana más estrecha), mayor es el valor del índice Cp.'
+            ],
+            correct: 3,
+            explanation: '¡Totalmente de acuerdo! El Cp premia la consistencia y la baja variabilidad. Con un rango de especificación de 20: Máquina 1 tiene Cp = 20/28.8 = 0.69 (No Capaz); Máquina 2 tiene Cp = 20/10.8 = 1.85 (Altamente Capaz).'
+          }
+        ]
+      },
+
+      /* NIVEL 7 */
+      {
+        level: 7,
+        title: 'Capacidad Real y Centrado (Cpk): Trabajar sin Rozar LEI ni LES',
+        explanation: 'Ya sabemos si el ancho de la máquina cabe entre LEI y LES (Cp). Ahora viene la pregunta clave: <strong>¿Dónde centró la máquina el operador? ¿En el centro ideal o arrimada a un límite?</strong><br><br>El índice <strong>Cpk</strong> mide la <strong>Capacidad Real</strong> considerando la distancia hacia el límite más cercano:<br><br><span style="font-size:1.1rem; color:#0284c7; font-weight:bold;">Cpk = mín[ (LES - X̄)/(3σ), (X̄ - LEI)/(3σ) ]</span><br><br>• <strong>Si el proceso está perfectamente centrado</strong>: <strong>Cpk = Cp</strong>.<br>• <strong>Si el proceso está descentrado (corrido a un lado)</strong>: La campana puede ser angosta, pero si está pegada al <strong>LES</strong> o al <strong>LEI</strong>, ¡rayas el producto contra la pared! Aunque el Cp sea alto, el <strong>Cpk será bajo</strong> y saldrán piezas defectuosas por ese extremo.<br>• La meta estándar en toda planta de calidad es: <strong>Cpk ≥ 1.33</strong>.',
+        analogyIcon: '🅿️',
+        analogyTitle: 'Analogía: Aparcar sin Rayar el Espejo contra LEI o LES',
+        analogyText: 'Tener un carro pequeño (Cp alto) no te salva si lo metes torcido contra la pared. El Cpk siempre mira la pared de especificación más cercana y peligrosa (LEI o LES). Si Cpk < 1.0, ¡estás rayando el carro contra los límites de la ficha técnica!',
+        goldenRule: 'Cp te dice si tu máquina tiene la capacidad física de caber; Cpk te dice si tu operador la mantiene bien centrada lejos de LEI y LES. ¡Exige siempre Cpk ≥ 1.33!',
+        illustrationSvg: `
+          <svg viewBox="0 0 540 110" style="max-width: 100%; height: 95px;">
+            <rect width="540" height="110" rx="8" class="svg-lesson-bg"/>
+            <line x1="80" y1="15" x2="80" y2="95" stroke="#ef4444" stroke-width="2.5"/>
+            <line x1="460" y1="15" x2="460" y2="95" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="85" y="28" fill="#ef4444" font-size="10" font-weight="bold">LEI</text>
+            <text x="455" y="28" fill="#ef4444" font-size="10" font-weight="bold" text-anchor="end">LES (¡Peligro!)</text>
+            
+            <path d="M 280 95 C 330 95, 370 45, 420 45 C 450 45, 480 85, 500 95" fill="rgba(239,68,68,0.2)" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="280" y="60" fill="#ef4444" font-size="10.5" font-weight="bold">Campana angosta pero corrida al LES</text>
+            <text x="280" y="75" fill="#dc2626" font-size="9.5">Cp = 1.6 (alto) pero Cpk = 0.5 (¡Rozando el LES!)</text>
+          </svg>
+        `,
+        exercises: [
+          {
+            chartTitle: 'Proceso Descentrado hacia el Límite de Especificación Superior (LES)',
+            chartType: 'bell',
+            lei: 20, les: 40, specLcl: 20, specUcl: 40, mean: 37, sigma: 1.8,
+            question: 'Mira la gráfica: el proceso tiene baja variación (campana angosta, Cp = 1.8), pero la media está corrida a 37 y la cola derecha se desborda por encima del LES rojo (40). ¿Qué ocurre con el Cpk?',
+            options: [
+              'El Cpk es igual a 1.8 porque el Cp siempre manda sobre todo.',
+              'El Cpk es bajo (menor a 1.0) porque el proceso está descentrado hacia el LES y genera producto no conforme por arriba.',
+              'El proceso es excelente porque no hay defectos por el lado del LEI.',
+              'El cliente ampliará la especificación para que la campana quede adentro.'
+            ],
+            correct: 1,
+            explanation: '¡Brillante! El proceso es angosto (Cp = 1.8), pero como está desviado hacia el LES (40), la distancia al límite superior es crítica: Cpk = (40 - 37) / (3 * 1.8) = 0.55 (Cpk < 1.0). Se debe centrar la media hacia 30 para recuperar el Cpk.'
+          },
+          {
+            chartTitle: 'Relación entre Cp y Cpk: Proceso Centrado Ideal',
+            chartType: 'bell',
+            lei: 40, les: 60, specLcl: 40, specUcl: 60, mean: 50, sigma: 2.2,
+            question: 'Cuando un proceso de planta tiene exactamente el mismo valor en ambos índices (Cp = 1.5 y Cpk = 1.5), ¿qué significa sobre la calidad de la línea?',
+            options: [
+              'Significa que el proceso está totalmente descalibrado.',
+              'Significa que el sistema cometió un error de cálculo al dar números iguales.',
+              'Significa que el proceso es altamente capaz y está PERFECTAMENTE CENTRADO entre el LEI y el LES.',
+              'Significa que la máquina está apagada.'
+            ],
+            correct: 2,
+            explanation: '¡Exactamente! Cuando Cp = Cpk, no existe ningún desvío hacia los límites: la campana está clavada en el centro exacto entre LEI y LES con holgura segura a ambos lados.'
+          },
+          {
+            chartTitle: 'Caso Real de Planta: Diagnóstico y Decisión Rápida',
+            chartType: 'bell',
+            lei: 90, les: 110, specLcl: 90, specUcl: 110, mean: 106, sigma: 2.2,
+            question: 'La ficha técnica exige Cpk ≥ 1.33 (con LEI = 90 y LES = 110). El reporte de tu máquina arroja: Cp = 1.50 pero Cpk = 0.60 por estar desviada hacia 106. Como líder de calidad, ¿cuál es la solución inmediata más rápida y económica?',
+            options: [
+              'Comprar una máquina nueva de 100,000 dólares porque la actual no sirve.',
+              'No hacer nada porque el Cp ya es 1.50 y eso es suficiente.',
+              'Reducir la velocidad de producción a la mitad.',
+              'Centrar el proceso ajustando la media de la máquina hacia la meta nominal (100) sin gastar dinero en maquinaria nueva.'
+            ],
+            correct: 3,
+            explanation: '¡Criterio de inspector experto! La máquina ya tiene la precisión necesaria (Cp = 1.50); el único defecto es que estaba mal apuntada hacia el LES. Mover la media a la meta nominal (100) subirá el Cpk automáticamente a 1.50 sin costo alguno.'
+          }
+        ]
+      }
+    ];
+
+    /* =====================================================================
+       NAVEGACIÓN Y FLUJO DEL JUEGO
+       ===================================================================== */
+    function goHome() {
+      showView('viewLogin');
+      document.getElementById('gameNav').classList.add('hidden');
+      document.getElementById('headerPlayerPill').classList.add('hidden');
+    }
+
+    function showView(viewId) {
+      const views = ['viewLogin', 'viewConcept', 'viewExercise', 'viewResult', 'viewCertificate'];
+      views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('hidden', id !== viewId);
+      });
+    }
+
+    async function handlePlayerLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('inputPlayerId').value.trim();
+      const nameInput = document.getElementById('inputPlayerName').value.trim();
+
+      if (!idInput || !nameInput) {
+        alert('Por favor ingresa tu Identificación y tu Nombre Completo.');
+        return;
+      }
+
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true;
+      btn.innerHTML = '<span>Cargando perfil...</span> ⏳';
+
+      const playerData = await apiLogin(idInput, nameInput);
+
+      player.id = String(playerData.player_id || idInput).trim();
+      player.name = String(playerData.name || nameInput).trim();
+      player.currentLevel = parseInt(playerData.current_level, 10) || 1;
+      player.maxLevel = parseInt(playerData.max_level, 10) || 1;
+      player.totalScore = parseInt(playerData.total_score, 10) || 0;
+      player.completed = !!playerData.completed;
+      player.levelScores = typeof playerData.level_scores === 'object' && playerData.level_scores !== null
+        ? playerData.level_scores
+        : (typeof playerData.level_scores === 'string' ? JSON.parse(playerData.level_scores) : {});
+
+      // Si tiene puntajes por nivel acumulados y totalScore estaba en 0
+      const sumScores = Object.values(player.levelScores).reduce((a, b) => (parseInt(a, 10) || 0) + (parseInt(b, 10) || 0), 0);
+      if (sumScores > player.totalScore) player.totalScore = sumScores;
+
+      if (player.completed) {
+        const certBtn = document.getElementById('headerBtnCert');
+        if (certBtn) certBtn.classList.remove('hidden');
+      }
+
+      document.getElementById('headerPlayerName').textContent = player.name;
+      document.getElementById('headerPlayerId').textContent = '#' + player.id;
+      document.getElementById('headerPlayerPill').classList.remove('hidden');
+      document.getElementById('scoreDisplay').textContent = player.totalScore + ' pts';
+      document.getElementById('gameNav').classList.remove('hidden');
+
+      btn.disabled = false;
+      btn.innerHTML = '<span>Comenzar el Desafío</span> <span>🎮</span>';
+
+      currentLevel = player.completed ? 1 : player.currentLevel;
+      loadLevelConcept(currentLevel);
+    }
+
+    function updateLevelStepper(lvl) {
+      for (let i = 1; i <= 7; i++) {
+        const node = document.getElementById('stepNode' + i);
+        const conn = document.getElementById('stepConn' + i);
+        if (node) {
+          node.className = 'step-node';
+          if (i < lvl || (player.levelScores && player.levelScores[i])) {
+            node.classList.add('completed');
+          } else if (i === lvl) {
+            node.classList.add('active');
+          }
+        }
+        if (conn) {
+          conn.className = 'step-connector';
+          if (i < lvl) conn.classList.add('completed');
+        }
+      }
+      document.getElementById('scoreDisplay').textContent = player.totalScore + ' pts';
+    }
+
+    /* =====================================================================
+       FASE 1: EXPLICACIÓN COMPLETA DEL TEMA (PRIMERO SE EXPLICA)
+       ===================================================================== */
+    function loadLevelConcept(lvl) {
+      currentLevel = lvl;
+      updateLevelStepper(lvl);
+      const data = LEVELS_DATA[lvl - 1];
+
+      document.getElementById('conceptLevelTag').textContent = `MÓDULO DE APRENDIZAJE · NIVEL ${lvl} DE 7`;
+      document.getElementById('conceptTitle').textContent = data.title;
+      document.getElementById('conceptExplanationText').innerHTML = data.explanation;
+      document.getElementById('conceptAnalogyIcon').textContent = data.analogyIcon;
+      document.getElementById('conceptAnalogyTitle').textContent = data.analogyTitle;
+      document.getElementById('conceptAnalogyText').textContent = data.analogyText;
+      document.getElementById('conceptIllustrationBox').innerHTML = data.illustrationSvg;
+      document.getElementById('conceptGoldenRule').textContent = data.goldenRule;
+
+      showView('viewConcept');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startLevelExercises() {
+      currentExerciseIndex = 0;
+      currentLevelHits = 0;
+      loadExercise(currentLevel, currentExerciseIndex);
+    }
+
+    /* =====================================================================
+       FASE 2: EVALUACIÓN PRÁCTICA (3 EJERCICIOS POR NIVEL)
+       ===================================================================== */
+    let currentRenderedCorrectIndex = 0;
+
+    function loadExercise(lvl, exIdx) {
+      isAnswerChecked = false;
+      const lvlData = LEVELS_DATA[lvl - 1];
+      const ex = lvlData.exercises[exIdx];
+
+      showView('viewExercise');
+
+      document.getElementById('exerciseCounterText').textContent = `Ejercicio ${exIdx + 1} de 3 · Nivel ${lvl}`;
+      for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.className = 'ex-dot';
+        if (i - 1 === exIdx) dot.classList.add('active');
+        else if (i - 1 < exIdx) dot.classList.add('success');
+      }
+
+      document.getElementById('feedbackBox').classList.add('hidden');
+      document.getElementById('btnNextExercise').classList.add('hidden');
+
+      document.getElementById('chartTitle').textContent = ex.chartTitle;
+      document.getElementById('questionText').textContent = ex.question;
+
+      // Renderizar nomenclatura / leyenda dinámica adaptada al ejercicio
+      renderChartLegend(ex);
+
+      // Renderizar gráfico (Carta de control o Campana de Gauss / Cp / Cpk)
+      if (ex.chartType === 'bell' || ex.chartType === 'bellCompare') {
+        renderBellCurveChart(ex);
+      } else {
+        renderSvgChart(ex);
+      }
+
+      // Mezclar aleatoriamente el orden de las opciones en cada ejercicio e intento
+      const shuffledOptions = ex.options.map((text, idx) => ({
+        text,
+        isCorrect: idx === ex.correct
+      }));
+      for (let i = shuffledOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = shuffledOptions[i];
+        shuffledOptions[i] = shuffledOptions[j];
+        shuffledOptions[j] = temp;
+      }
+      currentRenderedCorrectIndex = shuffledOptions.findIndex(item => item.isCorrect);
+
+      const optionsGrid = document.getElementById('optionsGrid');
+      const letters = ['A', 'B', 'C', 'D'];
+      optionsGrid.innerHTML = shuffledOptions.map((item, i) => `
+        <div class="option-card" id="option_${i}" onclick="selectOption(${i})">
+          <div class="option-badge">${letters[i]}</div>
+          <div class="option-text">${escapeHtml(item.text)}</div>
+        </div>
+      `).join('');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* NOMENCLATURA Y LEYENDA DINÁMICA DE LA GRÁFICA */
+    function renderChartLegend(ex) {
+      const legendContainer = document.getElementById('chartLegend');
+      if (!legendContainer) return;
+
+      let html = '';
+
+      if (ex.chartType === 'bell' || ex.chartType === 'bellCompare') {
+        html += `<div class="legend-item"><span class="legend-line" style="background:#dc2626; height:3px;"></span><span>Límites de Especificación (LEI / LES)</span></div>`;
+        if (ex.chartType === 'bellCompare') {
+          html += `<div class="legend-item"><span class="legend-dot" style="background:#8b5cf6;"></span><span>Máquina 1 (Morada, Ancha)</span></div>`;
+          html += `<div class="legend-item"><span class="legend-dot" style="background:#10b981;"></span><span>Máquina 2 (Verde, Angosta)</span></div>`;
+        } else {
+          html += `<div class="legend-item"><span class="legend-dot" style="background:#0284c7;"></span><span>Campana de Variación (6σ)</span></div>`;
+          html += `<div class="legend-item"><span class="legend-line" style="background:#10b981; border: 1px dashed #10b981; height:2px;"></span><span>Media Central = ${ex.mean}</span></div>`;
+        }
+      } else {
+        const primaryName = ex.primarySeriesName || (ex.secondarySeries ? 'Máquina A (Línea Azul)' : 'Muestras del Proceso (Azul)');
+        html += `<div class="legend-item"><span class="legend-dot" style="background:#0284c7;"></span><span>${escapeHtml(primaryName)}</span></div>`;
+
+        if (ex.secondarySeries) {
+          const secColor = ex.secondarySeries.color || '#8b5cf6';
+          const secName = ex.secondarySeries.name || 'Máquina B';
+          html += `<div class="legend-item"><span class="legend-dot" style="background:${secColor};"></span><span>${escapeHtml(secName)}</span></div>`;
+        }
+
+        if (ex.target !== undefined) {
+          html += `<div class="legend-item"><span class="legend-line" style="background:#10b981; height:3px;"></span><span>Meta = ${ex.target}</span></div>`;
+        }
+
+        const lesVal = ex.les !== undefined ? ex.les : (ex.ucl !== undefined ? ex.ucl : ex.specUcl);
+        const leiVal = ex.lei !== undefined ? ex.lei : (ex.lcl !== undefined ? ex.lcl : ex.specLcl);
+        if (lesVal !== undefined || leiVal !== undefined) {
+          html += `<div class="legend-item"><span class="legend-line" style="background:#ef4444; border: 1px dashed #ef4444; height:2px;"></span><span>Límites de Especificación (LEI / LES)</span></div>`;
+        }
+      }
+
+      legendContainer.innerHTML = html;
+    }
+
+    /* RENDERIZADOR 1: GRÁFICA DE CONTROL TEMPORAL (NIVELES 1 A 5) */
+    function renderSvgChart(ex) {
+      const container = document.getElementById('svgContainer');
+      const width = 760;
+      const height = 240;
+      const padLeft = 60;
+      const padRight = 115; // Margen derecho dedicado exclusivamente a las etiquetas de límites
+      const padTop = 24;
+      const padBottom = 35;
+
+      const plotW = width - padLeft - padRight;
+      const plotH = height - padTop - padBottom;
+
+      const yMin = ex.yMin;
+      const yMax = ex.yMax;
+      const scaleY = val => padTop + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
+      const nPoints = ex.points ? ex.points.length : 10;
+
+      // Margen interior horizontal para separar los puntos de los extremos y evitar solapamientos
+      const innerPadX = 24;
+      const scaleX = idx => padLeft + innerPadX + (idx / Math.max(1, nPoints - 1)) * (plotW - 2 * innerPadX);
+
+      const isLight = document.body.classList.contains('theme-light');
+      const gridStroke = isLight ? '#e2e8f0' : '#1e293b';
+      const labelFill = isLight ? '#475569' : '#64748b';
+      const calloutBg = isLight ? '#ffffff' : '#1e293b';
+      const calloutBorder = isLight ? '#d97706' : '#f59e0b';
+      const calloutTextColor = isLight ? '#b45309' : '#fef08a';
+      const pointWhiteStroke = isLight ? '#ffffff' : '#0b1120';
+      const plotAreaBg = isLight ? 'rgba(248, 250, 252, 0.65)' : 'rgba(15, 23, 42, 0.45)';
+
+      let svg = `<svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 100%;">`;
+
+      // Área de fondo del trazado
+      svg += `<rect x="${padLeft}" y="${padTop}" width="${plotW}" height="${plotH}" fill="${plotAreaBg}" rx="6"/>`;
+
+      // Cuadrícula y escala en el eje Y (izquierda)
+      const gridSteps = 4;
+      for (let i = 0; i <= gridSteps; i++) {
+        const val = yMin + ((yMax - yMin) / gridSteps) * i;
+        const y = scaleY(val);
+        svg += `
+          <line x1="${padLeft}" y1="${y}" x2="${padLeft + plotW}" y2="${y}" stroke="${gridStroke}" stroke-width="1"/>
+          <text x="${padLeft - 8}" y="${y + 4}" fill="${labelFill}" font-size="10.5" font-family="monospace" font-weight="600" text-anchor="end">${val.toFixed(1)}</text>
+        `;
+      }
+
+      // Eje inferior X
+      svg += `<line x1="${padLeft}" y1="${padTop + plotH}" x2="${padLeft + plotW}" y2="${padTop + plotH}" stroke="${gridStroke}" stroke-width="1.5"/>`;
+
+      // 1. Límite de Especificación Superior (LES) en Rojo
+      const lesVal = ex.les !== undefined ? ex.les : (ex.ucl !== undefined ? ex.ucl : ex.specUcl);
+      if (lesVal !== undefined) {
+        const yU = scaleY(lesVal);
+        svg += `
+          <line x1="${padLeft}" y1="${yU}" x2="${padLeft + plotW}" y2="${yU}" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="6,3"/>
+          <rect x="${padLeft + plotW + 5}" y="${yU - 9}" width="98" height="18" rx="4" fill="${isLight ? '#fee2e2' : 'rgba(239,68,68,0.2)'}" stroke="#ef4444" stroke-width="1"/>
+          <text x="${padLeft + plotW + 10}" y="${yU + 4}" fill="${isLight ? '#dc2626' : '#f87171'}" font-size="9" font-weight="bold">LES = ${lesVal}</text>
+        `;
+      }
+
+      // 2. Límite de Especificación Inferior (LEI) en Rojo
+      const leiVal = ex.lei !== undefined ? ex.lei : (ex.lcl !== undefined ? ex.lcl : ex.specLcl);
+      if (leiVal !== undefined) {
+        const yL = scaleY(leiVal);
+        svg += `
+          <line x1="${padLeft}" y1="${yL}" x2="${padLeft + plotW}" y2="${yL}" stroke="#ef4444" stroke-width="2.2" stroke-dasharray="6,3"/>
+          <rect x="${padLeft + plotW + 5}" y="${yL - 9}" width="98" height="18" rx="4" fill="${isLight ? '#fee2e2' : 'rgba(239,68,68,0.2)'}" stroke="#ef4444" stroke-width="1"/>
+          <text x="${padLeft + plotW + 10}" y="${yL + 4}" fill="${isLight ? '#dc2626' : '#f87171'}" font-size="9" font-weight="bold">LEI = ${leiVal}</text>
+        `;
+      }
+
+      // 3. Línea Central Nominal / Meta en Verde Esmeralda
+      if (ex.target !== undefined) {
+        const yTarget = scaleY(ex.target);
+        svg += `
+          <line x1="${padLeft}" y1="${yTarget}" x2="${padLeft + plotW}" y2="${yTarget}" stroke="#10b981" stroke-width="2.2"/>
+          <rect x="${padLeft + plotW + 5}" y="${yTarget - 9}" width="98" height="18" rx="4" fill="${isLight ? '#d1fae5' : 'rgba(16,185,129,0.2)'}" stroke="#10b981" stroke-width="1"/>
+          <text x="${padLeft + plotW + 10}" y="${yTarget + 4}" fill="${isLight ? '#047857' : '#34d399'}" font-size="9" font-weight="bold">Meta = ${ex.target}</text>
+        `;
+      }
+
+      // 4. Serie Secundaria (ej. Máquina B, Turno Noche) - en Morado distintivo
+      if (ex.secondarySeries) {
+        const sec = ex.secondarySeries;
+        const secColor = sec.color || '#8b5cf6';
+        const polyPoints = sec.points.map((p, idx) => `${scaleX(idx).toFixed(1)},${scaleY(p).toFixed(1)}`).join(' ');
+        svg += `<polyline points="${polyPoints}" fill="none" stroke="${secColor}" stroke-width="2.2" stroke-dasharray="5,3"/>`;
+        sec.points.forEach((p, idx) => {
+          const cx = scaleX(idx);
+          const cy = scaleY(p);
+          svg += `
+            <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="4.5" fill="${secColor}" stroke="${pointWhiteStroke}" stroke-width="1.5">
+              <title>${sec.name || 'Serie 2'} Muestra #${idx + 1}: ${p}</title>
+            </circle>
+          `;
+        });
+      }
+
+      // 5. Serie Principal (ej. Máquina A, Turno Mañana, Proceso General) - en Azul Cyan
+      if (ex.points) {
+        const polyMain = ex.points.map((p, idx) => `${scaleX(idx).toFixed(1)},${scaleY(p).toFixed(1)}`).join(' ');
+        svg += `<polyline points="${polyMain}" fill="none" stroke="#0284c7" stroke-width="2.5"/>`;
+
+        ex.points.forEach((p, idx) => {
+          const cx = scaleX(idx);
+          const cy = scaleY(p);
+          const isOut = (lesVal !== undefined && p > lesVal) || (leiVal !== undefined && p < leiVal);
+          const fillCol = isOut ? '#ef4444' : '#0284c7';
+          const rSize = isOut ? 6.5 : 4.5;
+
+          svg += `
+            <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${rSize}" fill="${fillCol}" stroke="${pointWhiteStroke}" stroke-width="${isOut ? 2 : 1}">
+              <title>Muestra #${idx + 1}: ${p}</title>
+            </circle>
+            <text x="${cx.toFixed(1)}" y="${height - padBottom + 16}" fill="${labelFill}" font-size="10" font-weight="600" text-anchor="middle">#${idx + 1}</text>
+          `;
+        });
+      }
+
+      // 6. Cuadro de Llamada / Callout explicativo
+      if (ex.calloutIndex !== undefined && ex.calloutText && ex.points) {
+        const cx = scaleX(ex.calloutIndex);
+        const cy = scaleY(ex.points[ex.calloutIndex]);
+        const isHigh = cy < height / 2;
+        const boxY = isHigh ? cy + 22 : cy - 36;
+        const boxW = Math.max(160, ex.calloutText.length * 7.5);
+
+        svg += `
+          <line x1="${cx.toFixed(1)}" y1="${cy.toFixed(1)}" x2="${cx.toFixed(1)}" y2="${(boxY + (isHigh ? 0 : 22)).toFixed(1)}" stroke="${calloutBorder}" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <rect x="${(cx - boxW / 2).toFixed(1)}" y="${boxY.toFixed(1)}" width="${boxW}" height="22" rx="6" fill="${calloutBg}" stroke="${calloutBorder}" stroke-width="1.4" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.1))"/>
+          <text x="${cx.toFixed(1)}" y="${(boxY + 15).toFixed(1)}" fill="${calloutTextColor}" font-size="9.5" font-weight="bold" text-anchor="middle">${ex.calloutText}</text>
+        `;
+      }
+
+      svg += `</svg>`;
+      container.innerHTML = svg;
+    }
+
+    /* RENDERIZADOR 2: CAMPANA DE GAUSS Y CAPACIDAD CP / CPK (NIVELES 6 Y 7) */
+    function renderBellCurveChart(ex) {
+      const container = document.getElementById('svgContainer');
+      const width = 760;
+      const height = 265;
+      const padLeft = 65;
+      const padRight = 65;
+      const padTop = 30;
+      const baseY = height - 46; // 219
+      const plotW = width - padLeft - padRight;
+
+      const isLight = document.body.classList.contains('theme-light');
+      const baseAxisStroke = isLight ? '#cbd5e1' : '#334155';
+      const garageBg = isLight ? 'rgba(2, 132, 199, 0.07)' : 'rgba(56, 189, 248, 0.05)';
+      const garageBorder = isLight ? '#d97706' : '#f59e0b';
+      const garageText = isLight ? '#b45309' : '#fef08a';
+
+      const leiVal = ex.lei !== undefined ? ex.lei : (ex.specLcl !== undefined ? ex.specLcl : 30);
+      const lesVal = ex.les !== undefined ? ex.les : (ex.specUcl !== undefined ? ex.specUcl : 70);
+
+      // Escala horizontal dinámica para que la especificación (LEI-LES) y las colas (±3.5σ) se vean completas sin recortes
+      const maxSigma = ex.chartType === 'bellCompare'
+        ? Math.max(ex.sigmaA || 3, ex.sigmaB || 3)
+        : (ex.sigma || 3);
+      const meanVal = ex.mean !== undefined ? ex.mean : (leiVal + lesVal) / 2;
+      const rawMin = Math.min(leiVal, meanVal - 3.5 * maxSigma);
+      const rawMax = Math.max(lesVal, meanVal + 3.5 * maxSigma);
+      const rawSpan = Math.max(10, rawMax - rawMin);
+      const minX = rawMin - rawSpan * 0.10;
+      const maxX = rawMax + rawSpan * 0.10;
+
+      const scaleX = x => padLeft + ((x - minX) / (maxX - minX)) * plotW;
+
+      let svg = `<svg viewBox="0 0 ${width} ${height}" style="width: 100%; height: 100%;">`;
+
+      // 1. Zona sombreada de Especificación entre LEI y LES
+      const xL = scaleX(leiVal);
+      const xU = scaleX(lesVal);
+      const tolWidth = (lesVal - leiVal).toFixed(1);
+      const cotaY = padTop + 18; // y = 48 (separado arriba del pico de la campana)
+      const cotaBoxW = Math.min(210, Math.max(148, (xU - xL) - 14));
+
+      svg += `
+        <rect x="${xL}" y="${padTop}" width="${xU - xL}" height="${baseY - padTop}" fill="${garageBg}"/>
+        <line x1="${xL}" y1="${cotaY}" x2="${xU}" y2="${cotaY}" stroke="${garageBorder}" stroke-width="1.6" stroke-dasharray="4,4"/>
+        <polyline points="${xL + 6},${cotaY - 4} ${xL},${cotaY} ${xL + 6},${cotaY + 4}" fill="none" stroke="${garageBorder}" stroke-width="1.6"/>
+        <polyline points="${xU - 6},${cotaY - 4} ${xU},${cotaY} ${xU - 6},${cotaY + 4}" fill="none" stroke="${garageBorder}" stroke-width="1.6"/>
+        <rect x="${((xL + xU) / 2 - cotaBoxW / 2)}" y="${cotaY - 10}" width="${cotaBoxW}" height="20" rx="4" fill="${isLight ? '#ffffff' : '#1e293b'}" stroke="${garageBorder}" stroke-width="1.2"/>
+        <text x="${(xL + xU) / 2}" y="${cotaY + 4}" fill="${garageText}" font-size="9.5" font-weight="bold" text-anchor="middle">
+          ESPECIFICACIÓN (LES - LEI = ${tolWidth})
+        </text>
+      `;
+
+      // 2. Paredes de Especificación LEI y LES en Rojo (Banda superior y = 6..26)
+      svg += `
+        <line x1="${xL}" y1="${padTop - 4}" x2="${xL}" y2="${baseY}" stroke="#dc2626" stroke-width="2.8"/>
+        <rect x="${xL - 40}" y="6" width="80" height="20" rx="4" fill="#dc2626"/>
+        <text x="${xL}" y="20" fill="#ffffff" font-size="9.5" font-weight="bold" text-anchor="middle">LEI = ${leiVal}</text>
+        <text x="${xL}" y="${baseY + 16}" fill="#dc2626" font-size="10" font-weight="bold" text-anchor="middle">LEI (${leiVal})</text>
+
+        <line x1="${xU}" y1="${padTop - 4}" x2="${xU}" y2="${baseY}" stroke="#dc2626" stroke-width="2.8"/>
+        <rect x="${xU - 40}" y="6" width="80" height="20" rx="4" fill="#dc2626"/>
+        <text x="${xU}" y="20" fill="#ffffff" font-size="9.5" font-weight="bold" text-anchor="middle">LES = ${lesVal}</text>
+        <text x="${xU}" y="${baseY + 16}" fill="#dc2626" font-size="10" font-weight="bold" text-anchor="middle">LES (${lesVal})</text>
+      `;
+
+      // 3. Eje base horizontal
+      svg += `<line x1="${padLeft - 20}" y1="${baseY}" x2="${width - padRight + 20}" y2="${baseY}" stroke="${baseAxisStroke}" stroke-width="2"/>`;
+
+      // 4. Función auxiliar para dibujar campana gaussiana sin solapar etiquetas
+      function drawBell(mean, sigma, color, label, fillAlpha, customPeakH) {
+        let path = '';
+        const peakH = customPeakH || 110; // Pico en y = 219 - 110 = 109 (deja libre y = 38..58 de Especificación)
+        const peakY = baseY - peakH;
+        const step = 2;
+        for (let px = padLeft - 15; px <= width - padRight + 15; px += step) {
+          const valX = minX + ((px - padLeft) / plotW) * (maxX - minX);
+          const z = (valX - mean) / sigma;
+          const y = baseY - peakH * Math.exp(-0.5 * z * z);
+          path += (px === padLeft - 15 ? 'M ' : 'L ') + `${px.toFixed(1)} ${y.toFixed(1)} `;
+        }
+        svg += `<path d="${path} L ${width - padRight + 15} ${baseY} L ${padLeft - 15} ${baseY} Z" fill="${color}" fill-opacity="${fillAlpha || 0.22}" stroke="${color}" stroke-width="2.5"/>`;
+
+        // Línea vertical punteada de la media y etiqueta posicionada sin chocar con LEI/LES ni con Especificación
+        const xM = scaleX(mean);
+        const fullText = `${label}: ${mean}`;
+        const badgeW = Math.max(92, Math.round(fullText.length * 6.4) + 14);
+        let badgeX = xM - badgeW / 2;
+        if (mean < lesVal && badgeX + badgeW > xU - 5) {
+          badgeX = xU - badgeW - 6;
+        }
+        if (mean > leiVal && badgeX < xL + 5) {
+          badgeX = xL + 6;
+        }
+        const badgeCenterX = badgeX + badgeW / 2;
+
+        svg += `
+          <line x1="${xM}" y1="${peakY}" x2="${xM}" y2="${baseY}" stroke="${color}" stroke-width="2" stroke-dasharray="3,3"/>
+          <circle cx="${xM}" cy="${peakY}" r="4.5" fill="${color}"/>
+          <rect x="${badgeX}" y="${peakY - 24}" width="${badgeW}" height="19" rx="4" fill="${isLight ? '#ffffff' : '#0f172a'}" stroke="${color}" stroke-width="1.3"/>
+          <text x="${badgeCenterX}" y="${peakY - 11}" fill="${color}" font-size="9.5" font-weight="bold" text-anchor="middle">${fullText}</text>
+        `;
+      }
+
+      if (ex.chartType === 'bellCompare') {
+        // MÁQUINA 1: MORADO (Ancha, pico más bajo) / MÁQUINA 2: VERDE (Angosta, pico más alto)
+        drawBell(ex.mean, ex.sigmaA, '#8b5cf6', 'Máq 1 (6σ=' + (6 * ex.sigmaA).toFixed(1) + ')', 0.18, 72);
+        drawBell(ex.mean, ex.sigmaB, '#10b981', 'Máq 2 (6σ=' + (6 * ex.sigmaB).toFixed(1) + ')', 0.30, 114);
+      } else {
+        const effectiveUcl = ex.les !== undefined ? ex.les : (ex.specUcl !== undefined ? ex.specUcl : ex.ucl);
+        const effectiveLcl = ex.lei !== undefined ? ex.lei : (ex.specLcl !== undefined ? ex.specLcl : ex.lcl);
+        const isOut = (effectiveUcl !== undefined && ex.mean + 3 * ex.sigma > effectiveUcl) ||
+          (effectiveLcl !== undefined && ex.mean - 3 * ex.sigma < effectiveLcl);
+        const bellColor = isOut ? '#d97706' : '#0284c7';
+        drawBell(ex.mean, ex.sigma, bellColor, 'Media', 0.25, 110);
+
+        // Cota inferior del ancho de variación de la máquina (6σ) para comparar visualmente contra (LES - LEI)
+        const xMinus3 = Math.max(padLeft - 10, scaleX(ex.mean - 3 * ex.sigma));
+        const xPlus3 = Math.min(width - padRight + 10, scaleX(ex.mean + 3 * ex.sigma));
+        const width6Sigma = (6 * ex.sigma).toFixed(1);
+        const cotaBottomY = baseY + 32;
+        svg += `
+          <line x1="${xMinus3}" y1="${cotaBottomY}" x2="${xPlus3}" y2="${cotaBottomY}" stroke="${bellColor}" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <polyline points="${xMinus3 + 5},${cotaBottomY - 3.5} ${xMinus3},${cotaBottomY} ${xMinus3 + 5},${cotaBottomY + 3.5}" fill="none" stroke="${bellColor}" stroke-width="1.5"/>
+          <polyline points="${xPlus3 - 5},${cotaBottomY - 3.5} ${xPlus3},${cotaBottomY} ${xPlus3 - 5},${cotaBottomY + 3.5}" fill="none" stroke="${bellColor}" stroke-width="1.5"/>
+          <rect x="${(xMinus3 + xPlus3) / 2 - 82}" y="${cotaBottomY - 9}" width="164" height="17" rx="4" fill="${isLight ? '#ffffff' : '#0f172a'}" stroke="${bellColor}" stroke-width="1"/>
+          <text x="${(xMinus3 + xPlus3) / 2}" y="${cotaBottomY + 3}" fill="${bellColor}" font-size="9" font-weight="bold" text-anchor="middle">
+            VARIACIÓN 6σ = ${width6Sigma}
+          </text>
+        `;
+      }
+
+      svg += `</svg>`;
+      container.innerHTML = svg;
+    }
+
+    /* GESTIÓN DE RESPUESTA DEL USUARIO */
+    function selectOption(optionIndex) {
+      if (isAnswerChecked) return;
+      isAnswerChecked = true;
+
+      const lvlData = LEVELS_DATA[currentLevel - 1];
+      const ex = lvlData.exercises[currentExerciseIndex];
+      const isCorrect = (optionIndex === currentRenderedCorrectIndex);
+
+      const cards = document.querySelectorAll('.option-card');
+      cards.forEach((card, idx) => {
+        card.classList.add('disabled');
+        if (idx === currentRenderedCorrectIndex) {
+          card.classList.add('correct');
+        } else if (idx === optionIndex && !isCorrect) {
+          card.classList.add('incorrect');
+        }
+      });
+
+      const feedbackBox = document.getElementById('feedbackBox');
+      const feedbackTitle = document.getElementById('feedbackTitle');
+      const feedbackIcon = document.getElementById('feedbackIcon');
+      const feedbackExplanation = document.getElementById('feedbackExplanation');
+
+      feedbackBox.classList.remove('hidden', 'correct', 'incorrect');
+      if (isCorrect) {
+        currentLevelHits++;
+        playSound('correct');
+        feedbackBox.classList.add('correct');
+        feedbackIcon.textContent = '✅';
+        feedbackTitle.textContent = '¡Excelente Análisis!';
+      } else {
+        playSound('wrong');
+        feedbackBox.classList.add('incorrect');
+        feedbackIcon.textContent = '❌';
+        feedbackTitle.textContent = 'Respuesta Incorrecta';
+      }
+      feedbackExplanation.textContent = ex.explanation;
+
+      const curDot = document.getElementById('dot' + (currentExerciseIndex + 1));
+      if (curDot) {
+        curDot.classList.remove('active');
+        curDot.classList.add(isCorrect ? 'success' : 'fail');
+      }
+
+      const btnNext = document.getElementById('btnNextExercise');
+      const btnText = document.getElementById('btnNextExerciseText');
+      btnNext.classList.remove('hidden');
+
+      if (currentExerciseIndex < 2) {
+        btnText.textContent = 'Siguiente Ejercicio';
+      } else {
+        btnText.textContent = 'Ver Resultado del Nivel';
+      }
+    }
+
+    function nextExercise() {
+      if (currentExerciseIndex < 2) {
+        currentExerciseIndex++;
+        loadExercise(currentLevel, currentExerciseIndex);
+      } else {
+        finishLevelEvaluation();
+      }
+    }
+
+    /* =====================================================================
+       FASE 3: EVALUACIÓN DEL NIVEL (ÉXITO O REINICIO)
+       ===================================================================== */
+    async function finishLevelEvaluation() {
+      const passed = (currentLevelHits === 3);
+
+      showView('viewResult');
+      const resultBadge = document.getElementById('resultBadge');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultSubtitle = document.getElementById('resultSubtitle');
+      const resultScorePill = document.getElementById('resultScorePill');
+      const resultBonusPill = document.getElementById('resultBonusPill');
+      const actionContainer = document.getElementById('resultActionContainer');
+
+      resultScorePill.textContent = `${currentLevelHits} / 3`;
+
+      if (passed) {
+        playSound('win');
+        try {
+          confetti({
+            particleCount: 90,
+            spread: 75,
+            origin: { y: 0.6 }
+          });
+        } catch (e) { }
+
+        resultBadge.textContent = '🎉';
+        resultTitle.textContent = `¡Nivel ${currentLevel} Superado!`;
+        resultSubtitle.textContent = '¡Impecable! Has respondido correctamente los 3 ejercicios demostrando dominio total de este concepto.';
+        resultBonusPill.textContent = '+100 pts';
+
+        await apiCompleteLevel(currentLevel, 100);
+
+        if (currentLevel < 7) {
+          actionContainer.innerHTML = `
+            <button class="btn-primary" style="max-width: 340px; margin: 0 auto;" onclick="loadLevelConcept(${currentLevel + 1})">
+              <span>Avanzar al Módulo del Nivel ${currentLevel + 1}</span>
+              <span>🚀</span>
+            </button>
+          `;
+        } else {
+          // Ha completado los 7 niveles
+          actionContainer.innerHTML = `
+            <button class="btn-primary" style="max-width: 340px; margin: 0 auto; background: linear-gradient(135deg, #10b981, #059669);" onclick="showCertificate()">
+              <span>Ver mi Certificado en Competencia Técnica en SPC</span>
+              <span>🏅</span>
+            </button>
+          `;
+        }
+      } else {
+        // PERDIÓ: DEBE REINICIAR ESE NIVEL
+        playSound('wrong');
+        resultBadge.textContent = '⚠️';
+        resultTitle.textContent = `Nivel ${currentLevel} No Aprobado`;
+        resultSubtitle.textContent = `Obtuviste ${currentLevelHits} de 3 aciertos. Para garantizar que dominas el concepto antes de avanzar, debes lograr los 3 aciertos (3/3). ¡Repasemos la lección e intentémoslo de nuevo!`;
+        resultBonusPill.textContent = '0 pts';
+
+        await apiFailLevel(currentLevel);
+
+        actionContainer.innerHTML = `
+          <button class="btn-primary" style="max-width: 340px; margin: 0 auto; background: linear-gradient(135deg, #f59e0b, #d97706);" onclick="loadLevelConcept(${currentLevel})">
+            <span>🔄 Repasar Explicación y Reintentar Nivel ${currentLevel}</span>
+          </button>
+        `;
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* =====================================================================
+       FASE 4: CERTIFICADO FINAL (7 NIVELES SUPERADOS)
+       ===================================================================== */
+    async function showCertificate() {
+      showView('viewCertificate');
+
+      // 1. Fecha oficial en español estricto (ej. 6 de noviembre de 2026)
+      const now = new Date();
+      const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+      const fechaOficial = `${now.getDate()} de ${meses[now.getMonth()]} de ${now.getFullYear()}`;
+
+      // 2. Cálculo inmediato de puntaje
+      const calculatedScore = Object.values(player.levelScores || {}).reduce((a, b) => (parseInt(a, 10) || 0) + (parseInt(b, 10) || 0), 0);
+      if (calculatedScore > 0 && (!player.totalScore || player.totalScore === 0)) {
+        player.totalScore = calculatedScore;
+      }
+      if (!player.totalScore || player.totalScore === 0) {
+        player.totalScore = 700; // Al alcanzar el certificado se superaron los 7 niveles
+      }
+
+      // 3. Función auxiliar para asignación segura e inmediata en el DOM
+      const setTxt = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+      };
+
+      const renderCertFields = () => {
+        setTxt('certPlayerName', player.name || 'Participante');
+        setTxt('certPlayerId', 'ID de Calidad: #' + (player.id || '00000000'));
+        setTxt('certTotalScore', player.totalScore + ' pts');
+        setTxt('certAccuracy', '7 / 7 (100%)');
+        setTxt('certDateDisplay', fechaOficial);
+        setTxt('certFolioCode', 'SPC-2026-' + (player.id || '38611991'));
+        setTxt('scoreDisplay', player.totalScore + ' pts');
+        const certBtn = document.getElementById('headerBtnCert');
+        if (certBtn) certBtn.classList.remove('hidden');
+      };
+
+      // Renderizado instantáneo (0 ms de espera)
+      renderCertFields();
+
+      // 4. Sincronización en segundo plano con Neon PostgreSQL
+      if (player.id) {
+        try {
+          const res = await fetch(`${API_BASE}/api/player/${player.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.player) {
+              if (data.player.total_score !== undefined) {
+                player.totalScore = parseInt(data.player.total_score, 10) || player.totalScore;
+              }
+              if (data.player.name) player.name = data.player.name;
+              if (data.player.level_scores) {
+                player.levelScores = typeof data.player.level_scores === 'object' ? data.player.level_scores : JSON.parse(data.player.level_scores);
+              }
+              renderCertFields();
+            }
+          }
+        } catch (e) {
+          console.warn('No se pudo refrescar datos de Neon para el certificado', e);
+        }
+      }
+
+      try {
+        confetti({
+          particleCount: 160,
+          spread: 100,
+          origin: { y: 0.5 }
+        });
+      } catch (e) { }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function restartGameFromBeginning() {
+      currentLevel = 1;
+      loadLevelConcept(1);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      applyTheme(currentTheme);
+      checkNeonHealth();
+    });
+  </script>
+</body>
+
+</html>
